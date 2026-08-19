@@ -37,15 +37,17 @@ const solarPlanets = [
   { name: "NEPTUNE", jp: "海王星", prefix: "未来を", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
 ] as const;
 
+const orbitGeometry = { centerX: 0, centerY: 50, radiusX: 96, radiusY: 32.5 } as const;
+
 const orbitPass = [
-  { x: 58, y: 76, scale: 3.7, opacity: 1, blur: 0, z: 1100, label: 1 },
-  { x: 92, y: 50, scale: 0.72, opacity: 0.75, blur: 0.6, z: 620, label: 0.48 },
-  { x: 63, y: 32, scale: 0.32, opacity: 0.45, blur: 1.8, z: 360, label: 0.16 },
-  { x: 27, y: 30, scale: 0.17, opacity: 0.25, blur: 3.5, z: 180, label: 0 },
-  { x: -10, y: 45, scale: 0.08, opacity: 0.1, blur: 6, z: 70, label: 0 },
-  { x: -18, y: 74, scale: 0.04, opacity: 0, blur: 8, z: 40, label: 0 },
-  { x: 22, y: 124, scale: 7.4, opacity: 0, blur: 1.4, z: 1680, label: 0 },
-  { x: 38, y: 112, scale: 6.1, opacity: 0, blur: 0.15, z: 1480, label: 0 },
+  { angle: 52.8, scale: 4.8, opacity: 1, blur: 0, z: 1180, label: 1 },
+  { angle: 0, scale: 0.62, opacity: 0.76, blur: 0.8, z: 630, label: 0.42 },
+  { angle: -30, scale: 0.2, opacity: 0.42, blur: 2.4, z: 320, label: 0.12 },
+  { angle: -58, scale: 0.09, opacity: 0.22, blur: 4.2, z: 160, label: 0 },
+  { angle: -88, scale: 0.04, opacity: 0.08, blur: 7, z: 80, label: 0 },
+  { angle: -130, scale: 0.02, opacity: 0, blur: 9, z: 30, label: 0 },
+  { angle: -240, scale: 9, opacity: 0, blur: 1.8, z: 1700, label: 0 },
+  { angle: -288, scale: 7.2, opacity: 0, blur: 0.2, z: 1500, label: 0 },
 ] as const;
 
 const heroShots = [
@@ -82,9 +84,13 @@ function interpolateOrbitPass(phase: number) {
   const from = orbitPass[fromIndex];
   const to = orbitPass[toIndex];
   const mix = (start: number, end: number) => start + (end - start) * progress;
+  const toAngle = toIndex === 0 ? to.angle - 360 : to.angle;
+  const angle = mix(from.angle, toAngle) * Math.PI / 180;
 
   return {
-    x: mix(from.x, to.x), y: mix(from.y, to.y), scale: mix(from.scale, to.scale),
+    x: orbitGeometry.centerX + Math.cos(angle) * orbitGeometry.radiusX,
+    y: orbitGeometry.centerY + Math.sin(angle) * orbitGeometry.radiusY,
+    scale: mix(from.scale, to.scale),
     opacity: mix(from.opacity, to.opacity), blur: mix(from.blur, to.blur),
     z: mix(from.z, to.z), label: mix(from.label, to.label),
   };

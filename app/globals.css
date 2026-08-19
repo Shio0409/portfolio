@@ -256,15 +256,16 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   position: absolute;
   top: 50%;
   left: 0;
-  width: calc(48% + var(--orbit-index) * 16.5%);
-  height: calc(13% + var(--orbit-index) * 6%);
+  width: calc(72% + var(--orbit-index) * 17.142857%);
+  height: calc(24% + var(--orbit-index) * 5.857143%);
   border: 1px solid rgba(157, 173, 227, calc(.17 - var(--orbit-index) * .012));
   border-radius: 50%;
   box-shadow: 0 0 22px rgba(66, 91, 190, .025);
-  transform: translate(-50%, -50%) rotate(8.6deg) skewX(-8deg);
+  transform: translate(-50%, -50%);
 }
 
 .solar-orbits i:nth-child(odd) { border-style: dashed; }
+.solar-orbits i:last-child { border-color: rgba(94,233,255,.22); box-shadow: 0 0 34px rgba(94,233,255,.06); }
 
 .solar-sun {
   position: absolute;

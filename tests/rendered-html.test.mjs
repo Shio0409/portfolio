@@ -68,9 +68,10 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(data, /export const careerEvents/);
   assert.match(experience, /PortfolioExperience/);
   assert.match(experience, /prefers-reduced-motion/);
-  assert.match(experience, /x: 58, y: 76, scale: 3\.7/);
-  assert.match(experience, /x: 92, y: 50, scale: 0\.72/);
-  assert.match(experience, /x: 38, y: 112, scale: 6\.1, opacity: 0/);
+  assert.match(experience, /centerX: 0, centerY: 50, radiusX: 96, radiusY: 32\.5/);
+  assert.match(experience, /angle: 52\.8, scale: 4\.8/);
+  assert.match(experience, /angle: -30, scale: 0\.2/);
+  assert.match(experience, /angle: -288, scale: 7\.2, opacity: 0/);
   assert.match(page, /robots:/);
   assert.match(layout, /lang="ja"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
