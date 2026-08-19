@@ -105,6 +105,7 @@ export default function PortfolioExperience() {
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
+  const [careerCharacterY, setCareerCharacterY] = useState(-100);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const careerRef = useRef<HTMLElement>(null);
@@ -189,7 +190,23 @@ export default function PortfolioExperience() {
       const rect = section.getBoundingClientRect();
       const travel = Math.max(rect.height - window.innerHeight * 0.45, 1);
       const next = Math.min(1, Math.max(0, (window.innerHeight * 0.58 - rect.top) / travel));
+      const viewportCenter = window.innerHeight * 0.5;
+      const entryEnd = 0.14;
+      const exitStart = 0.86;
+      let characterY = viewportCenter;
+
+      if (next < entryEnd) {
+        const entry = next / entryEnd;
+        const easedEntry = 1 - Math.pow(1 - entry, 3);
+        characterY = -100 + (viewportCenter + 100) * easedEntry;
+      } else if (next > exitStart) {
+        const exit = (next - exitStart) / (1 - exitStart);
+        const easedExit = Math.pow(exit, 3);
+        characterY = viewportCenter + (viewportCenter + 100) * easedExit;
+      }
+
       setCareerProgress(Number(next.toFixed(3)));
+      setCareerCharacterY(Math.round(characterY));
     };
     const schedule = () => {
       window.cancelAnimationFrame(frame);
@@ -274,6 +291,20 @@ export default function PortfolioExperience() {
       <a className="skip-link" href="#main-content">本文へスキップ</a>
 
       <main id="main-content" aria-hidden={loaderState !== "hidden"}>
+        <div
+          className={`fixed-making-statement ${makerVisible ? "" : "is-hidden"} ${activeSection === "creation" ? "is-creation" : ""}`}
+          style={{ "--making-accent": activePlanet.color } as CSSProperties}
+        >
+          <p className={`fixed-making-prefix ${activeSection === "creation" ? "is-visible" : ""}`}>{activePlanet.prefix}</p>
+          <h1 id="hero-title" className="fixed-maker-word">つくる。</h1>
+        </div>
+
+        <div
+          className={`career-character career-character-overlay ${careerProgress > 0 && careerProgress < 1 ? "is-visible" : ""}`}
+          style={{ "--career-character-y": `${careerCharacterY}px` } as CSSProperties}
+          aria-hidden="true"
+        ><span /><span /><b>YOU</b></div>
+
         <section className="cosmic-hero page-section" id="top" aria-labelledby="hero-title">
           <div className="cosmic-sky" aria-hidden="true"><i /><i /><i /><i /></div>
           <header className="cosmic-header">
@@ -292,8 +323,6 @@ export default function PortfolioExperience() {
             <div className="reel-progress" aria-hidden="true"><i /><i /><i /></div>
           </div>
           <div className="cosmic-intro"><p className="cosmic-index"><span>01</span> / TOP</p><p className="cosmic-manifesto">境界を越えて、まだ名前のない体験へ。<br />人と世界が出会う瞬間を設計する。</p></div>
-          <h1 id="hero-title" className={`fixed-maker-word ${makerVisible ? "" : "is-hidden"}`}>つくる。</h1>
-          <p className={`fixed-making-prefix ${activeSection === "creation" ? "is-visible" : ""}`}>{activePlanet.prefix}</p>
           <button className="cosmic-scroll" type="button" onClick={() => scrollToSection("creation")}><span>ENTER ORBIT</span><i aria-hidden="true" /></button>
         </section>
 
@@ -416,10 +445,9 @@ export default function PortfolioExperience() {
             <h2 id="career-title" data-reveal>経験は、次の判断を<br /><span>つくっていく。</span></h2>
             <p data-reveal>点在していた経験がつながり、現在のProject Manager / Directorへ。スクロールとともに、獲得した視点をたどります。</p>
           </div>
-          <div className="career-map" style={{ "--career-progress": careerProgress, "--career-position": `${careerProgress * 100}%` } as CSSProperties}>
+          <div className="career-map" style={{ "--career-progress": careerProgress } as CSSProperties}>
             <div className="career-track" aria-hidden="true">
               <i />
-              <div className="career-character"><span /><span /><b>YOU</b></div>
             </div>
             <ol className="career-events">
               {careerEvents.map((event, index) => (
