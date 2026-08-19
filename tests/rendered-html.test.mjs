@@ -40,8 +40,8 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /OBSERVATION IMAGERY \/ NASA・JPL・GSFC/);
   assert.match(html, /FRONT \/ ALIGN/);
   assert.equal((html.match(/class="solar-planet/g) ?? []).length, 8);
-  assert.equal((html.match(/is-behind-sun/g) ?? []).length, 5);
-  assert.equal((html.match(/is-in-front/g) ?? []).length, 3);
+  assert.equal((html.match(/is-behind-sun/g) ?? []).length, 4);
+  assert.equal((html.match(/is-in-front/g) ?? []).length, 4);
   assert.equal((html.match(/is-outgoing/g) ?? []).length, 2);
   assert.match(html, /class="career-character"/);
   assert.match(html, /og-solar\.png/);
@@ -68,6 +68,9 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(data, /export const careerEvents/);
   assert.match(experience, /PortfolioExperience/);
   assert.match(experience, /prefers-reduced-motion/);
+  assert.match(experience, /x: 58, y: 76, scale: 3\.7/);
+  assert.match(experience, /x: 92, y: 50, scale: 0\.72/);
+  assert.match(experience, /x: 38, y: 112, scale: 6\.1, opacity: 0/);
   assert.match(page, /robots:/);
   assert.match(layout, /lang="ja"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);

@@ -38,14 +38,14 @@ const solarPlanets = [
 ] as const;
 
 const orbitPass = [
-  { x: 79, y: 62, scale: 3.7, opacity: 1, blur: 0, z: 1100, label: 1 },
-  { x: 55, y: 42, scale: 0.62, opacity: 0.72, blur: 0.8, z: 480, label: 0.48 },
-  { x: 25, y: 31, scale: 0.25, opacity: 0.38, blur: 2.3, z: 260, label: 0.16 },
-  { x: 4, y: 36, scale: 0.13, opacity: 0.2, blur: 4, z: 130, label: 0 },
-  { x: -14, y: 52, scale: 0.08, opacity: 0.1, blur: 6, z: 70, label: 0 },
-  { x: -20, y: 76, scale: 0.04, opacity: 0, blur: 8, z: 40, label: 0 },
-  { x: 109, y: 106, scale: 6.7, opacity: 0, blur: 1.4, z: 1680, label: 0 },
-  { x: 91, y: 80, scale: 4.95, opacity: 0.7, blur: 0.15, z: 1480, label: 0.08 },
+  { x: 58, y: 76, scale: 3.7, opacity: 1, blur: 0, z: 1100, label: 1 },
+  { x: 92, y: 50, scale: 0.72, opacity: 0.75, blur: 0.6, z: 620, label: 0.48 },
+  { x: 63, y: 32, scale: 0.32, opacity: 0.45, blur: 1.8, z: 360, label: 0.16 },
+  { x: 27, y: 30, scale: 0.17, opacity: 0.25, blur: 3.5, z: 180, label: 0 },
+  { x: -10, y: 45, scale: 0.08, opacity: 0.1, blur: 6, z: 70, label: 0 },
+  { x: -18, y: 74, scale: 0.04, opacity: 0, blur: 8, z: 40, label: 0 },
+  { x: 22, y: 124, scale: 7.4, opacity: 0, blur: 1.4, z: 1680, label: 0 },
+  { x: 38, y: 112, scale: 6.1, opacity: 0, blur: 0.15, z: 1480, label: 0 },
 ] as const;
 
 const heroShots = [
