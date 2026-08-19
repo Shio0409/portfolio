@@ -27,14 +27,14 @@ const sections = [
 ] as const;
 
 const solarPlanets = [
-  { name: "MERCURY", jp: "水星", prefix: "問いを", color: "#a9a5a1", glow: "#cbc6bd", size: 28, category: "system" as CategoryId },
-  { name: "VENUS", jp: "金星", prefix: "関係を", color: "#efb56f", glow: "#ff8d47", size: 36, category: "community" as CategoryId },
-  { name: "EARTH", jp: "地球", prefix: "体験を", color: "#5ee9ff", glow: "#3156ff", size: 40, category: "world" as CategoryId },
-  { name: "MARS", jp: "火星", prefix: "遊びを", color: "#f17655", glow: "#d83c2e", size: 32, category: "play" as CategoryId },
-  { name: "JUPITER", jp: "木星", prefix: "世界を", color: "#e4b48c", glow: "#c16e55", size: 70, category: "world" as CategoryId },
-  { name: "SATURN", jp: "土星", prefix: "仕組みを", color: "#e8d394", glow: "#d49b55", size: 62, category: "system" as CategoryId },
-  { name: "URANUS", jp: "天王星", prefix: "文化を", color: "#8ce7e8", glow: "#4eb8ca", size: 48, category: "community" as CategoryId },
-  { name: "NEPTUNE", jp: "海王星", prefix: "未来を", color: "#6a79ff", glow: "#3447e2", size: 47, category: "play" as CategoryId },
+  { name: "MERCURY", jp: "水星", prefix: "問いを", color: "#a9a5a1", glow: "#cbc6bd", size: 42, image: "/planets/mercury.jpg", category: "system" as CategoryId },
+  { name: "VENUS", jp: "金星", prefix: "関係を", color: "#efb56f", glow: "#ff8d47", size: 58, image: "/planets/venus.jpg", category: "community" as CategoryId },
+  { name: "EARTH", jp: "地球", prefix: "体験を", color: "#5ee9ff", glow: "#3156ff", size: 62, image: "/planets/earth.jpg", category: "world" as CategoryId },
+  { name: "MARS", jp: "火星", prefix: "遊びを", color: "#f17655", glow: "#d83c2e", size: 54, image: "/planets/mars.jpg", category: "play" as CategoryId },
+  { name: "JUPITER", jp: "木星", prefix: "世界を", color: "#e4b48c", glow: "#c16e55", size: 112, image: "/planets/jupiter.jpg", category: "world" as CategoryId },
+  { name: "SATURN", jp: "土星", prefix: "仕組みを", color: "#e8d394", glow: "#d49b55", size: 100, image: "/planets/saturn.jpg", category: "system" as CategoryId },
+  { name: "URANUS", jp: "天王星", prefix: "文化を", color: "#8ce7e8", glow: "#4eb8ca", size: 82, image: "/planets/uranus.webp", category: "community" as CategoryId },
+  { name: "NEPTUNE", jp: "海王星", prefix: "未来を", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
 ] as const;
 
 const heroShots = [
@@ -265,7 +265,20 @@ export default function PortfolioExperience() {
         </section>
 
         <section className="creation-section page-section" id="creation" aria-labelledby="creation-title" style={{ "--category-accent": activeCategoryData.accent } as CSSProperties}>
-          <div className="creation-stars" aria-hidden="true" />
+          <div className="creation-stars" aria-hidden="true">
+            {Array.from({ length: 36 }, (_, index) => (
+              <i
+                key={index}
+                style={{
+                  "--star-x": `${(index * 37 + 11) % 100}%`,
+                  "--star-y": `${(index * 61 + 7) % 100}%`,
+                  "--star-size": `${1 + (index % 4) * 0.55}px`,
+                  "--star-delay": `${-(index % 9) * 0.47}s`,
+                  "--star-duration": `${2.3 + (index % 6) * 0.48}s`,
+                } as CSSProperties}
+              />
+            ))}
+          </div>
           <header className="section-header section-header-light" data-reveal><p><span>02</span> / CREATION</p><p>ROTATE THE SOLAR SYSTEM</p></header>
           <div className="creation-heading" data-reveal>
             <h2 id="creation-title">8つの軌道、<br /><span>8つの「つくる。」</span></h2>
@@ -299,15 +312,16 @@ export default function PortfolioExperience() {
                 ))}
               </div>
               <div className="solar-axis" aria-hidden="true"><i /><span>CREATION AXIS</span></div>
-              <div className="solar-sun" aria-hidden="true"><i /><span>SUN</span></div>
+              <div className="solar-sun" aria-hidden="true"><i /><span>SUN / 00</span></div>
               {solarPlanets.map((planet, index) => {
-                const angle = (index - activeSolar) * 45 + dragOffset;
+                const angle = (activeSolar - index) * 45 - dragOffset;
                 const radians = (angle * Math.PI) / 180;
-                const radiusX = 10 + index * 5.7;
-                const radiusY = 5 + index * 2.55;
-                const x = 18 + Math.cos(radians) * radiusX;
-                const y = 50 + Math.sin(radians) * radiusY;
+                const radiusX = 24 + index * 8.25;
+                const radiusY = 6.5 + index * 3;
                 const depth = (Math.cos(radians) + 1) / 2;
+                const frontEase = Math.pow(depth, 2.65);
+                const x = Math.cos(radians) * radiusX * (1 - frontEase) + 79 * frontEase;
+                const y = (50 + Math.sin(radians) * radiusY) * (1 - frontEase) + 62 * frontEase;
                 const isActive = index === activeSolar && Math.abs(dragOffset) < 14;
                 return (
                   <button
@@ -318,19 +332,20 @@ export default function PortfolioExperience() {
                     aria-pressed={isActive}
                     onClick={() => { if (!dragRef.current.moved) selectSolarPlanet(index); }}
                     style={{
-                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": 0.48 + depth * 0.92,
-                      "--planet-opacity": 0.3 + depth * 0.7, "--planet-color": planet.color,
-                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 60 + index + 2),
-                      "--planet-size": `${planet.size}px`, "--planet-blur": `${(1 - depth) * 2.2}px`,
+                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": 0.25 + Math.pow(depth, 2.2) * 2.1,
+                      "--planet-opacity": 0.18 + depth * 0.82, "--planet-color": planet.color,
+                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 100 + index + 10),
+                      "--planet-size": `${planet.size}px`, "--planet-blur": `${(1 - depth) * 3.2}px`,
+                      "--planet-image": `url(${planet.image})`, "--planet-rotation": `${48 + index * 6}s`,
                     } as CSSProperties}
                   >
                     <i className="planet-surface" aria-hidden="true" />
-                    {planet.name === "SATURN" && <i className="planet-ring" aria-hidden="true" />}
                     <span>{planet.jp} / {planet.name}</span><b>{planet.prefix}</b>
                   </button>
                 );
               })}
-              <div className="solar-camera" aria-hidden="true" style={{ "--camera-x": `${28 + activeSolar * 5.7}%` } as CSSProperties}><i /><span>FRONT / ALIGN</span></div>
+              <div className="solar-camera" aria-hidden="true"><i /><span>FRONT / ALIGN</span></div>
+              <p className="solar-source-credit">OBSERVATION IMAGERY / NASA・JPL・GSFC</p>
             </div>
 
             <article className="solar-transmission" key={activeSolar} aria-live="polite">

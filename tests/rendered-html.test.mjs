@@ -35,6 +35,10 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /DRAG \/ SWIPE TO ROTATE/);
   assert.match(html, /MERCURY/);
   assert.match(html, /NEPTUNE/);
+  assert.match(html, /\/planets\/earth\.jpg/);
+  assert.match(html, /\/planets\/saturn\.jpg/);
+  assert.match(html, /OBSERVATION IMAGERY \/ NASA・JPL・GSFC/);
+  assert.match(html, /FRONT \/ ALIGN/);
   assert.equal((html.match(/class="solar-planet/g) ?? []).length, 8);
   assert.match(html, /class="career-character"/);
   assert.match(html, /og-solar\.png/);
