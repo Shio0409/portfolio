@@ -84,11 +84,13 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(data, /export const careerEvents/);
   assert.match(experience, /PortfolioExperience/);
   assert.match(experience, /prefers-reduced-motion/);
-  assert.match(experience, /centerX: 0, centerY: 50, radiusX: 96, radiusY: 32\.5/);
+  assert.match(experience, /centerX: 0, centerY: 50, radiusX: 86, radiusY: 40/);
   assert.match(experience, /angle: 52\.8, scale: 4\.8/);
   assert.match(experience, /angle: -30, scale: 0\.2/);
   assert.match(experience, /angle: -288, scale: 7\.2, opacity: 0/);
   assert.match(experience, /fixed-making-statement/);
+  assert.match(experience, /makerDocked/);
+  assert.match(experience, /transmission-docked-title/);
   assert.match(experience, /headingHasArrived.*0\.22/);
   assert.match(experience, /futureHasArrived.*0\.92/);
   assert.match(experience, /careerCharacterVisible/);

@@ -31,7 +31,7 @@ const solarPlanets = [
   { name: "NEPTUNE", jp: "海王星", prefix: "未来を", description: "まだ名前のない可能性を試作し、次の現実へつながる入口をつくる。", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
 ] as const;
 
-const orbitGeometry = { centerX: 0, centerY: 50, radiusX: 96, radiusY: 32.5 } as const;
+const orbitGeometry = { centerX: 0, centerY: 50, radiusX: 86, radiusY: 40 } as const;
 
 const orbitPass = [
   { angle: 52.8, scale: 4.8, opacity: 1, blur: 0, z: 1180, label: 1 },
@@ -91,8 +91,10 @@ export default function PortfolioExperience() {
   const [activeSolar, setActiveSolar] = useState(2);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [makerDocked, setMakerDocked] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
+  const creationRef = useRef<HTMLElement>(null);
   const careerHeadingRef = useRef<HTMLHeadingElement>(null);
   const careerMapRef = useRef<HTMLDivElement>(null);
   const futureRef = useRef<HTMLElement>(null);
@@ -104,6 +106,27 @@ export default function PortfolioExperience() {
       window.setTimeout(() => setLoaderState("hidden"), 520);
       return "leaving";
     });
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const updateMakerDock = () => {
+      const creation = creationRef.current;
+      if (!creation) return;
+      setMakerDocked(creation.getBoundingClientRect().top <= 1);
+    };
+    const schedule = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(updateMakerDock);
+    };
+    updateMakerDock();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
   }, []);
 
   useEffect(() => {
@@ -226,7 +249,8 @@ export default function PortfolioExperience() {
   };
 
   const navProgress = Math.max(0, sections.findIndex((section) => section.id === activeSection) / (sections.length - 1));
-  const makerVisible = activeSection === "top" || activeSection === "creation";
+  const makerVisible = !makerDocked && (activeSection === "top" || activeSection === "creation");
+  const makerInCreationPose = activeSection === "creation" || makerDocked;
   const activePlanet = solarPlanets[activeSolar];
 
   return (
@@ -245,8 +269,9 @@ export default function PortfolioExperience() {
 
       <main id="main-content" aria-hidden={loaderState !== "hidden"}>
         <div
-          className={`fixed-making-statement ${makerVisible ? "" : "is-hidden"} ${activeSection === "creation" ? "is-creation" : ""}`}
+          className={`fixed-making-statement ${makerVisible ? "" : "is-hidden"} ${makerInCreationPose ? "is-creation" : ""}`}
           style={{ "--making-accent": activePlanet.color } as CSSProperties}
+          aria-hidden={makerDocked}
         >
           <p className={`fixed-making-prefix ${activeSection === "creation" ? "is-visible" : ""}`}>{activePlanet.prefix}</p>
           <h1 id="hero-title" className="fixed-maker-word">つくる。</h1>
@@ -278,7 +303,7 @@ export default function PortfolioExperience() {
           <button className="cosmic-scroll" type="button" onClick={() => scrollToSection("creation")}><span>ENTER ORBIT</span><i aria-hidden="true" /></button>
         </section>
 
-        <section className="creation-section page-section" id="creation" aria-labelledby="creation-title" style={{ "--category-accent": activePlanet.color } as CSSProperties}>
+        <section className="creation-section page-section" id="creation" ref={creationRef} aria-labelledby="creation-title" style={{ "--category-accent": activePlanet.color } as CSSProperties}>
           <div className="creation-stars" aria-hidden="true">
             {Array.from({ length: 36 }, (_, index) => (
               <i
@@ -360,7 +385,9 @@ export default function PortfolioExperience() {
             <article className="solar-transmission" key={activeSolar} aria-live="polite">
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
-              <div className="transmission-title-slot" aria-hidden="true" />
+              <div className={`transmission-docked-title ${makerDocked ? "is-visible" : ""}`} aria-hidden="true">
+                <p>{activePlanet.prefix}</p><strong>つくる。</strong>
+              </div>
               <p>{activePlanet.description}</p>
               <div className="planet-selector" aria-label="惑星を直接選択">
                 {solarPlanets.map((planet, index) => (
