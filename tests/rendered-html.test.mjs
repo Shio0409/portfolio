@@ -32,11 +32,18 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /<title>\[NAME\] — つくる。 \| Project Manager \/ Director<\/title>/i);
   assert.match(html, /name="robots" content="noindex, nofollow"/i);
   assert.match(html, />つくる。</);
-  assert.match(html, /DRAG \/ SWIPE THE ORBIT/);
-  assert.match(html, /og\.png/);
+  assert.match(html, /DRAG \/ SWIPE TO ROTATE/);
+  assert.match(html, /MERCURY/);
+  assert.match(html, /NEPTUNE/);
+  assert.equal((html.match(/class="solar-planet/g) ?? []).length, 8);
+  assert.match(html, /class="career-character"/);
+  assert.match(html, /og-solar\.png/);
   assert.match(html, /id="creation"/);
   assert.match(html, /id="career"/);
   assert.match(html, /id="future"/);
+  assert.ok(html.indexOf('id="top"') < html.indexOf('id="creation"'));
+  assert.ok(html.indexOf('id="creation"') < html.indexOf('id="career"'));
+  assert.ok(html.indexOf('id="career"') < html.indexOf('id="future"'));
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 

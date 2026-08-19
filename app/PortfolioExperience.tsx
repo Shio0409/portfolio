@@ -21,17 +21,20 @@ import {
 
 const sections = [
   { id: "top", number: "01", label: "TOP" },
-  { id: "career", number: "02", label: "CAREER" },
-  { id: "creation", number: "03", label: "CREATION" },
+  { id: "creation", number: "02", label: "CREATION" },
+  { id: "career", number: "03", label: "CAREER" },
   { id: "future", number: "04", label: "FUTURE" },
 ] as const;
 
-const careerPlanets = [
-  { name: "ORIGIN", prefix: "世界を", color: "#7b90ff", glow: "#3156ff" },
-  { name: "IDEA", prefix: "企画を", color: "#6ff2ff", glow: "#00b6d7" },
-  { name: "EXPERIENCE", prefix: "体験を", color: "#ff83d4", glow: "#e2269a" },
-  { name: "CONNECT", prefix: "関係を", color: "#ffc75f", glow: "#ff7b38" },
-  { name: "NEXT", prefix: "未来を", color: "#a9ff73", glow: "#4ed54e" },
+const solarPlanets = [
+  { name: "MERCURY", jp: "水星", prefix: "問いを", color: "#a9a5a1", glow: "#cbc6bd", size: 28, category: "system" as CategoryId },
+  { name: "VENUS", jp: "金星", prefix: "関係を", color: "#efb56f", glow: "#ff8d47", size: 36, category: "community" as CategoryId },
+  { name: "EARTH", jp: "地球", prefix: "体験を", color: "#5ee9ff", glow: "#3156ff", size: 40, category: "world" as CategoryId },
+  { name: "MARS", jp: "火星", prefix: "遊びを", color: "#f17655", glow: "#d83c2e", size: 32, category: "play" as CategoryId },
+  { name: "JUPITER", jp: "木星", prefix: "世界を", color: "#e4b48c", glow: "#c16e55", size: 70, category: "world" as CategoryId },
+  { name: "SATURN", jp: "土星", prefix: "仕組みを", color: "#e8d394", glow: "#d49b55", size: 62, category: "system" as CategoryId },
+  { name: "URANUS", jp: "天王星", prefix: "文化を", color: "#8ce7e8", glow: "#4eb8ca", size: 48, category: "community" as CategoryId },
+  { name: "NEPTUNE", jp: "海王星", prefix: "未来を", color: "#6a79ff", glow: "#3447e2", size: 47, category: "play" as CategoryId },
 ] as const;
 
 const heroShots = [
@@ -65,12 +68,14 @@ export default function PortfolioExperience() {
   const [activeSection, setActiveSection] = useState("top");
   const [activeCategory, setActiveCategory] = useState<CategoryId>("world");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [activeCareer, setActiveCareer] = useState(2);
+  const [activeSolar, setActiveSolar] = useState(2);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [careerProgress, setCareerProgress] = useState(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
-  const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0 });
+  const careerRef = useRef<HTMLElement>(null);
+  const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, moved: false });
 
   const activeCategoryData = useMemo(
     () => categories.find((category) => category.id === activeCategory) ?? categories[0],
@@ -143,6 +148,30 @@ export default function PortfolioExperience() {
     return () => document.documentElement.classList.remove("dialog-open");
   }, [selectedProject]);
 
+  useEffect(() => {
+    let frame = 0;
+    const updateProgress = () => {
+      const section = careerRef.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const travel = Math.max(rect.height - window.innerHeight * 0.45, 1);
+      const next = Math.min(1, Math.max(0, (window.innerHeight * 0.58 - rect.top) / travel));
+      setCareerProgress(Number(next.toFixed(3)));
+    };
+    const schedule = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(updateProgress);
+    };
+    updateProgress();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
+
   const scrollToSection = (id: string) => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
@@ -160,13 +189,15 @@ export default function PortfolioExperience() {
     window.requestAnimationFrame(() => openerRef.current?.focus());
   };
 
-  const selectCareer = (index: number) => {
-    setActiveCareer(wrapIndex(index, careerPlanets.length));
+  const selectSolarPlanet = (index: number) => {
+    const next = wrapIndex(index, solarPlanets.length);
+    setActiveSolar(next);
+    setActiveCategory(solarPlanets[next].category);
     setDragOffset(0);
   };
 
   const handleOrbitPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY };
+    dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, moved: false };
     event.currentTarget.setPointerCapture(event.pointerId);
     setIsDragging(true);
   };
@@ -175,22 +206,25 @@ export default function PortfolioExperience() {
     if (!isDragging || dragRef.current.pointerId !== event.pointerId) return;
     const deltaX = event.clientX - dragRef.current.startX;
     const deltaY = event.clientY - dragRef.current.startY;
+    if (Math.abs(deltaX) + Math.abs(deltaY) > 7) dragRef.current.moved = true;
     setDragOffset(Math.max(-150, Math.min(150, deltaX * 0.32 + deltaY * 0.1)));
   };
 
   const finishOrbitDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!isDragging || dragRef.current.pointerId !== event.pointerId) return;
-    const steps = Math.round(dragOffset / 72);
-    setActiveCareer((current) => wrapIndex(current - steps, careerPlanets.length));
+    const steps = Math.round(dragOffset / 45);
+    const next = wrapIndex(activeSolar - steps, solarPlanets.length);
+    setActiveSolar(next);
+    setActiveCategory(solarPlanets[next].category);
     setDragOffset(0);
     setIsDragging(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   };
 
   const navProgress = Math.max(0, sections.findIndex((section) => section.id === activeSection) / (sections.length - 1));
-  const makerVisible = activeSection === "top" || activeSection === "career";
-  const activeCareerData = careerEvents[activeCareer];
-  const activePlanet = careerPlanets[activeCareer];
+  const makerVisible = activeSection === "top" || activeSection === "creation";
+  const activePlanet = solarPlanets[activeSolar];
+  const activeSolarProject = projects[activeSolar];
 
   return (
     <>
@@ -226,82 +260,89 @@ export default function PortfolioExperience() {
           </div>
           <div className="cosmic-intro"><p className="cosmic-index"><span>01</span> / TOP</p><p className="cosmic-manifesto">境界を越えて、まだ名前のない体験へ。<br />人と世界が出会う瞬間を設計する。</p></div>
           <h1 id="hero-title" className={`fixed-maker-word ${makerVisible ? "" : "is-hidden"}`}>つくる。</h1>
-          <p className={`fixed-making-prefix ${activeSection === "career" ? "is-visible" : ""}`}>{activePlanet.prefix}</p>
-          <button className="cosmic-scroll" type="button" onClick={() => scrollToSection("career")}><span>ENTER ORBIT</span><i aria-hidden="true" /></button>
+          <p className={`fixed-making-prefix ${activeSection === "creation" ? "is-visible" : ""}`}>{activePlanet.prefix}</p>
+          <button className="cosmic-scroll" type="button" onClick={() => scrollToSection("creation")}><span>ENTER ORBIT</span><i aria-hidden="true" /></button>
         </section>
 
-        <section className="career-section page-section" id="career" aria-labelledby="career-title">
-          <div className="career-stars" aria-hidden="true" />
-          <header className="section-header section-header-light" data-reveal><p><span>02</span> / CAREER</p><p>ROTATE YOUR PERSPECTIVE</p></header>
-          <div className="career-intro" data-reveal>
-            <h2 id="career-title">点だった経験を、<br /><span>ひとつの軌道へ。</span></h2>
-            <div><p>専門領域をまたいだ経験は、すべて次の判断につながっている。</p><p className="drag-guide"><i aria-hidden="true">↔</i> DRAG / SWIPE THE ORBIT</p></div>
+        <section className="creation-section page-section" id="creation" aria-labelledby="creation-title" style={{ "--category-accent": activeCategoryData.accent } as CSSProperties}>
+          <div className="creation-stars" aria-hidden="true" />
+          <header className="section-header section-header-light" data-reveal><p><span>02</span> / CREATION</p><p>ROTATE THE SOLAR SYSTEM</p></header>
+          <div className="creation-heading" data-reveal>
+            <h2 id="creation-title">8つの軌道、<br /><span>8つの「つくる。」</span></h2>
+            <div><p>太陽を中心に、異なる領域がひとつの世界を形づくる。</p><p className="drag-guide"><i aria-hidden="true">↔</i> DRAG / SWIPE TO ROTATE</p></div>
           </div>
-          <div className="career-universe">
+
+          <div className="solar-layout">
             <div
-              className={`career-orbit-stage ${isDragging ? "is-dragging" : ""}`}
+              className={`solar-stage ${isDragging ? "is-dragging" : ""}`}
               role="slider"
               tabIndex={0}
-              aria-label="経歴の惑星。ドラッグ、スワイプ、または左右キーで選択できます"
+              aria-label="8つの惑星。ドラッグ、スワイプ、または左右キーで選択できます"
               aria-valuemin={1}
-              aria-valuemax={careerPlanets.length}
-              aria-valuenow={activeCareer + 1}
-              aria-valuetext={`${activeCareerData.year} ${activeCareerData.title}`}
+              aria-valuemax={solarPlanets.length}
+              aria-valuenow={activeSolar + 1}
+              aria-valuetext={`${activePlanet.jp} ${activePlanet.prefix}つくる。`}
               aria-orientation="horizontal"
               onPointerDown={handleOrbitPointerDown}
               onPointerMove={handleOrbitPointerMove}
               onPointerUp={finishOrbitDrag}
               onPointerCancel={finishOrbitDrag}
               onKeyDown={(event) => {
-                if (event.key === "ArrowRight" || event.key === "ArrowDown") selectCareer(activeCareer + 1);
-                if (event.key === "ArrowLeft" || event.key === "ArrowUp") selectCareer(activeCareer - 1);
+                if (["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(event.key)) event.preventDefault();
+                if (event.key === "ArrowRight" || event.key === "ArrowDown") selectSolarPlanet(activeSolar + 1);
+                if (event.key === "ArrowLeft" || event.key === "ArrowUp") selectSolarPlanet(activeSolar - 1);
               }}
             >
-              <div className="orbit-lines" aria-hidden="true"><i /><i /><i /></div>
-              <div className="orbit-target" aria-hidden="true"><i /><span>ALIGN</span></div>
-              <div className="orbit-sun" aria-hidden="true"><i />N</div>
-              {careerPlanets.map((planet, index) => {
-                const angle = (index - activeCareer) * 72 + dragOffset;
+              <div className="solar-orbits" aria-hidden="true">
+                {solarPlanets.map((planet, index) => (
+                  <i key={planet.name} style={{ "--orbit-index": index } as CSSProperties} />
+                ))}
+              </div>
+              <div className="solar-axis" aria-hidden="true"><i /><span>CREATION AXIS</span></div>
+              <div className="solar-sun" aria-hidden="true"><i /><span>SUN</span></div>
+              {solarPlanets.map((planet, index) => {
+                const angle = (index - activeSolar) * 45 + dragOffset;
                 const radians = (angle * Math.PI) / 180;
-                const x = 50 + Math.cos(radians) * 37;
-                const y = 50 + Math.sin(radians) * 37;
+                const radiusX = 10 + index * 5.7;
+                const radiusY = 5 + index * 2.55;
+                const x = 18 + Math.cos(radians) * radiusX;
+                const y = 50 + Math.sin(radians) * radiusY;
                 const depth = (Math.cos(radians) + 1) / 2;
-                const isActive = index === activeCareer && Math.abs(dragOffset) < 18;
+                const isActive = index === activeSolar && Math.abs(dragOffset) < 14;
                 return (
                   <button
-                    className={`career-planet ${isActive ? "is-active" : ""}`}
+                    className={`solar-planet planet-${index + 1} ${isActive ? "is-active" : ""}`}
                     type="button"
                     key={planet.name}
-                    aria-label={`${careerEvents[index].year} ${careerEvents[index].title}を表示`}
+                    aria-label={`${planet.jp}・${planet.prefix}つくる。を表示`}
                     aria-pressed={isActive}
-                    onClick={() => selectCareer(index)}
+                    onClick={() => { if (!dragRef.current.moved) selectSolarPlanet(index); }}
                     style={{
-                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": 0.58 + depth * 0.48,
-                      "--planet-opacity": 0.36 + depth * 0.64, "--planet-color": planet.color,
-                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 20 + 2),
+                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": 0.48 + depth * 0.92,
+                      "--planet-opacity": 0.3 + depth * 0.7, "--planet-color": planet.color,
+                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 60 + index + 2),
+                      "--planet-size": `${planet.size}px`, "--planet-blur": `${(1 - depth) * 2.2}px`,
                     } as CSSProperties}
-                  ><i aria-hidden="true" /><span>{String(index + 1).padStart(2, "0")}</span><b>{planet.name}</b></button>
+                  >
+                    <i className="planet-surface" aria-hidden="true" />
+                    {planet.name === "SATURN" && <i className="planet-ring" aria-hidden="true" />}
+                    <span>{planet.jp} / {planet.name}</span><b>{planet.prefix}</b>
+                  </button>
                 );
               })}
+              <div className="solar-camera" aria-hidden="true" style={{ "--camera-x": `${28 + activeSolar * 5.7}%` } as CSSProperties}><i /><span>FRONT / ALIGN</span></div>
             </div>
-            <article className="career-transmission" key={activeCareer} aria-live="polite">
-              <div className="transmission-meta"><span>{activeCareerData.year}</span><span>{activeCareerData.type}</span></div>
-              <p className="transmission-signal"><i /> SIGNAL LOCKED / {String(activeCareer + 1).padStart(2, "0")}</p>
-              <h3>{activeCareerData.title}</h3><p>{activeCareerData.description}</p>
-              <div className="transmission-unlock"><span>CAPABILITY ACQUIRED</span><strong>{activeCareerData.unlocked}</strong></div>
-              <div className="orbit-controls"><button type="button" onClick={() => selectCareer(activeCareer - 1)} aria-label="前の経歴">←</button><span>{String(activeCareer + 1).padStart(2, "0")} / 05</span><button type="button" onClick={() => selectCareer(activeCareer + 1)} aria-label="次の経歴">→</button></div>
+
+            <article className="solar-transmission" key={activeSolar} aria-live="polite">
+              <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
+              <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
+              <h3>{activePlanet.prefix}<br /><span>つくる。</span></h3>
+              <p>{activeSolarProject.description}</p>
+              <div className="transmission-unlock"><span>CONNECTED FIELD</span><strong>{activePlanet.category.toUpperCase()}</strong></div>
+              <div className="orbit-controls"><button type="button" onClick={() => selectSolarPlanet(activeSolar - 1)} aria-label="前の惑星">←</button><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><button type="button" onClick={() => selectSolarPlanet(activeSolar + 1)} aria-label="次の惑星">→</button></div>
             </article>
           </div>
-          <div className="approach-constellation" data-reveal>
-            <div><span>01 / DISCOVER</span><strong>目的を見つける</strong><p>解くべき問いを定め、プロジェクトの北極星をつくる。</p></div>
-            <div><span>02 / ALIGN</span><strong>専門性をつなぐ</strong><p>異なる判断基準を翻訳し、チームを同じ軌道へ導く。</p></div>
-            <div><span>03 / DELIVER</span><strong>届くまで進める</strong><p>試作と検証を重ね、アイデアを触れられる体験へ。</p></div>
-          </div>
-        </section>
 
-        <section className="creation-section page-section" id="creation" aria-labelledby="creation-title" style={{ "--category-accent": activeCategoryData.accent } as CSSProperties}>
-          <header className="section-header section-header-light" data-reveal><p><span>03</span> / CREATION</p><p>SELECT A CONSTELLATION</p></header>
-          <div className="creation-heading" data-reveal><h2 id="creation-title">領域を越えて、<br /><span>世界を実装する。</span></h2><p>{activeCategoryData.description}</p></div>
           <div className="category-tabs" role="tablist" aria-label="制作カテゴリー" data-reveal>
             {categories.map((category) => (
               <button key={category.id} type="button" role="tab" aria-selected={activeCategory === category.id} aria-controls="project-panel" onClick={() => setActiveCategory(category.id)}>
@@ -320,6 +361,37 @@ export default function PortfolioExperience() {
                 <button className="project-open" type="button" onClick={(event) => openProject(project, event)}><span>OPEN PROJECT FILE</span><span aria-hidden="true">↗</span></button>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="career-section page-section" id="career" ref={careerRef} aria-labelledby="career-title">
+          <div className="career-stars" aria-hidden="true" />
+          <header className="section-header section-header-light" data-reveal><p><span>03</span> / CAREER</p><p>EXPERIENCE LOG</p></header>
+          <div className="career-header">
+            <h2 id="career-title" data-reveal>経験は、次の判断を<br /><span>つくっていく。</span></h2>
+            <p data-reveal>点在していた経験がつながり、現在のProject Manager / Directorへ。スクロールとともに、獲得した視点をたどります。</p>
+          </div>
+          <div className="career-map" style={{ "--career-progress": careerProgress, "--career-position": `${careerProgress * 100}%` } as CSSProperties}>
+            <div className="career-track" aria-hidden="true">
+              <i />
+              <div className="career-character"><span /><span /><b>YOU</b></div>
+            </div>
+            <ol className="career-events">
+              {careerEvents.map((event, index) => (
+                <li key={`${event.title}-${index}`} data-reveal>
+                  <article>
+                    <div className="career-event-meta"><span>{event.year}</span><span>{event.type}</span></div>
+                    <h3>{event.title}</h3><p>{event.description}</p>
+                    <div className="unlock"><i /> SKILL UNLOCKED — {event.unlocked}</div>
+                  </article>
+                  <span className="career-node" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="career-next" data-reveal>
+            <span>ALL EXPERIENCE CONNECTED</span><p>これまで身につけたものを、<br />次の世界へ。</p>
+            <button type="button" onClick={() => scrollToSection("future")}>CONTINUE TO FUTURE ↓</button>
           </div>
         </section>
 

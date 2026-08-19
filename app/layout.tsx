@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     title,
     description,
     type: "website",
-    images: [{ url: "/og.png", width: 1733, height: 909, alt: "[NAME] — つくる。" }],
+    images: [{ url: "/og-solar.png", width: 1733, height: 909, alt: "[NAME] — つくる。" }],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
-    images: ["/og.png"],
+    images: ["/og-solar.png"],
   },
 };
 
