@@ -29,7 +29,7 @@ test("server-renders the portfolio experience", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>\[NAME\] — つくる。 \| Project Manager \/ Director<\/title>/i);
+  assert.match(html, /<title>塩澤 正高 \/ Masataka Shiozawa — つくる。 \| Project Manager \/ Director<\/title>/i);
   assert.match(html, /name="robots" content="noindex, nofollow"/i);
   assert.match(html, />つくる。</);
   assert.match(html, /DRAG \/ SWIPE TO ROTATE/);
@@ -45,7 +45,13 @@ test("server-renders the portfolio experience", async () => {
   assert.equal((html.match(/is-outgoing/g) ?? []).length, 2);
   assert.match(html, /career-character career-character-overlay/);
   assert.doesNotMatch(html, /category-tabs|project-grid|project-dialog|career-next/);
-  assert.match(html, /og-solar\.png/);
+  assert.match(html, /og-masataka-shiozawa\.png/);
+  assert.match(html, /MASATAKA SHIOZAWA/);
+  assert.match(html, /solt\.0409@gmail\.com/);
+  assert.match(html, /youtube\.com\/@sio_manyan/);
+  assert.match(html, /x\.com\/taque_0409/);
+  assert.match(html, /sio-shop\.booth\.pm/);
+  assert.match(html, /usr_8707d220-1408-4a8c-b25c-6a3b14a4c710/);
   assert.match(html, /id="creation"/);
   assert.match(html, /id="career"/);
   assert.match(html, /id="future"/);

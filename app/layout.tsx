@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const title = "[NAME] — つくる。 | Project Manager / Director";
-const description = "メタバースを舞台に、領域をつなぎ、まだ名前のない体験を実装するProject Manager / Directorのポートフォリオ。";
+const title = "塩澤 正高 / Masataka Shiozawa — つくる。 | Project Manager / Director";
+const description = "塩澤 正高のポートフォリオ。メタバースを舞台に、領域をつなぎ、まだ名前のない体験を実装するProject Manager / Director。";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://pm-director-portfolio-2026.mn756900.chatgpt.site"),
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     title,
     description,
     type: "website",
-    images: [{ url: "/og-solar.png", width: 1733, height: 909, alt: "[NAME] — つくる。" }],
+    images: [{ url: "/og-masataka-shiozawa.png", width: 1729, height: 910, alt: "Masataka Shiozawa — つくる。" }],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
-    images: ["/og-solar.png"],
+    images: ["/og-masataka-shiozawa.png"],
   },
 };
 

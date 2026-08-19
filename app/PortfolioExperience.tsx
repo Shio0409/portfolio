@@ -51,6 +51,15 @@ const heroShots = [
   { id: "03", title: "NEW REALITY", src: "/media/hero-reality.mp4" },
 ] as const;
 
+const contactChannels = [
+  { label: "YOUTUBE", value: "@sio_manyan", href: "https://www.youtube.com/@sio_manyan", external: true },
+  { label: "X", value: "@taque_0409", href: "https://x.com/taque_0409", external: true },
+  { label: "EMAIL", value: "solt.0409@gmail.com", href: "mailto:solt.0409@gmail.com", external: false },
+  { label: "DISCORD", value: "sio0409", href: null, external: false },
+  { label: "BOOTH", value: "sio-shop", href: "https://sio-shop.booth.pm/", external: true },
+  { label: "VRCHAT", value: "USER PROFILE", href: "https://vrchat.com/home/user/usr_8707d220-1408-4a8c-b25c-6a3b14a4c710", external: true },
+] as const;
+
 type LoaderState = "visible" | "leaving" | "hidden";
 
 function wrapIndex(index: number, length: number) {
@@ -218,8 +227,8 @@ export default function PortfolioExperience() {
       {loaderState !== "hidden" && (
         <div className={`intro-loader ${loaderState === "leaving" ? "is-leaving" : ""}`} role="dialog" aria-modal="true" aria-label="ポートフォリオを読み込んでいます">
           <button className="loader-skip-surface" type="button" onClick={dismissIntro} aria-label="ローディング演出をスキップ" />
-          <div className="loader-topline"><span>[NAME] / PORTFOLIO</span><span>METAVERSE LOG — 2026</span></div>
-          <div className="loader-orbit" aria-hidden="true"><i /><i /><i /><span>N</span></div>
+          <div className="loader-topline"><span>MASATAKA SHIOZAWA / PORTFOLIO</span><span>METAVERSE LOG — 2026</span></div>
+          <div className="loader-orbit" aria-hidden="true"><i /><i /><i /><span>S</span></div>
           <div className="loader-center"><p>ESTABLISHING CONNECTION</p><div className="loader-word"><span>U</span><span>N</span><span>I</span><span>V</span><span>E</span><span>R</span><span>S</span><span>E</span></div></div>
           <div className="loader-bottom"><span>CLICK / TAP / ENTER TO SKIP</span><div className="loader-progress"><i /></div><span>01 — 100</span></div>
         </div>
@@ -244,7 +253,7 @@ export default function PortfolioExperience() {
         <section className="cosmic-hero page-section" id="top" aria-labelledby="hero-title">
           <div className="cosmic-sky" aria-hidden="true"><i /><i /><i /><i /></div>
           <header className="cosmic-header">
-            <button className="cosmic-wordmark" type="button" onClick={() => scrollToSection("top")}><span className="cosmic-mark">N</span><span>[NAME]</span></button>
+            <button className="cosmic-wordmark" type="button" onClick={() => scrollToSection("top")}><span className="cosmic-mark">S</span><span>MASATAKA SHIOZAWA</span></button>
             <p>PROJECT MANAGER / DIRECTOR</p><p>PORTFOLIO 2026 — TOKYO</p>
           </header>
           <div className="cosmic-reel" aria-label="制作映像ショーリール">
@@ -398,10 +407,20 @@ export default function PortfolioExperience() {
             <ol className="vision-cycle" aria-label="コミュニティ構想の循環">{["TUTORIAL WORLD", "STUDY EVENT", "COMMUNITY", "CREATION", "EXHIBITION", "SUPPORT"].map((label, index) => <li key={label}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><i aria-hidden="true" /></li>)}</ol>
           </div>
           <div className="contact-block" data-reveal>
-            <p>CONTACT / LINKS</p><h3>次の世界を、<br />一緒に。</h3><p className="contact-note">連絡先と各種リンクは準備中です。素材受領後、ここから各チャンネルへ接続します。</p>
-            <div className="contact-placeholder">{['EMAIL', 'X', 'DISCORD', 'YOUTUBE', 'BOOTH', 'VRCHAT'].map((label) => <span key={label}>{label}<i>[ADD LINK]</i></span>)}</div>
+            <p>CONTACT / LINKS</p><h3>次の世界を、<br />一緒に。</h3><p className="contact-note">プロジェクトや制作のご相談は、メールまたは各プラットフォームからご連絡ください。</p>
+            <div className="contact-links">
+              {contactChannels.map((channel) => channel.href ? (
+                <a className="contact-link" key={channel.label} href={channel.href} target={channel.external ? "_blank" : undefined} rel={channel.external ? "noopener noreferrer" : undefined}>
+                  <span>{channel.label}</span><strong>{channel.value}</strong><i aria-hidden="true">↗</i>
+                </a>
+              ) : (
+                <div className="contact-link is-static" key={channel.label}>
+                  <span>{channel.label}</span><strong>{channel.value}</strong><i>ID</i>
+                </div>
+              ))}
+            </div>
           </div>
-          <footer className="site-footer"><span>[NAME] / PORTFOLIO 2026</span><button type="button" onClick={() => scrollToSection("top")}>BACK TO TOP ↑</button><span>PROJECT MANAGER / DIRECTOR</span></footer>
+          <footer className="site-footer"><span>塩澤 正高 / MASATAKA SHIOZAWA</span><button type="button" onClick={() => scrollToSection("top")}>BACK TO TOP ↑</button><span>PROJECT MANAGER / DIRECTOR</span></footer>
         </section>
       </main>
 
