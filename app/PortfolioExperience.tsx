@@ -11,7 +11,6 @@ import {
 import {
   careerEvents,
   type CategoryId,
-  projects,
 } from "./portfolio-data";
 
 const sections = [
@@ -22,14 +21,14 @@ const sections = [
 ] as const;
 
 const solarPlanets = [
-  { name: "MERCURY", jp: "水星", prefix: "問いを", color: "#a9a5a1", glow: "#cbc6bd", size: 42, image: "/planets/mercury.jpg", category: "system" as CategoryId },
-  { name: "VENUS", jp: "金星", prefix: "関係を", color: "#efb56f", glow: "#ff8d47", size: 58, image: "/planets/venus.jpg", category: "community" as CategoryId },
-  { name: "EARTH", jp: "地球", prefix: "体験を", color: "#5ee9ff", glow: "#3156ff", size: 62, image: "/planets/earth.jpg", category: "world" as CategoryId },
-  { name: "MARS", jp: "火星", prefix: "遊びを", color: "#f17655", glow: "#d83c2e", size: 54, image: "/planets/mars.jpg", category: "play" as CategoryId },
-  { name: "JUPITER", jp: "木星", prefix: "世界を", color: "#e4b48c", glow: "#c16e55", size: 112, image: "/planets/jupiter.jpg", category: "world" as CategoryId },
-  { name: "SATURN", jp: "土星", prefix: "仕組みを", color: "#e8d394", glow: "#d49b55", size: 100, image: "/planets/saturn.jpg", category: "system" as CategoryId },
-  { name: "URANUS", jp: "天王星", prefix: "文化を", color: "#8ce7e8", glow: "#4eb8ca", size: 82, image: "/planets/uranus.webp", category: "community" as CategoryId },
-  { name: "NEPTUNE", jp: "海王星", prefix: "未来を", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
+  { name: "MERCURY", jp: "水星", prefix: "問いを", description: "曖昧な課題を分解し、チームが動き出せる問いへ変換する。", color: "#a9a5a1", glow: "#cbc6bd", size: 42, image: "/planets/mercury.jpg", category: "system" as CategoryId },
+  { name: "VENUS", jp: "金星", prefix: "関係を", description: "立場の違いを翻訳し、人と人が協働できる接点を設計する。", color: "#efb56f", glow: "#ff8d47", size: 58, image: "/planets/venus.jpg", category: "community" as CategoryId },
+  { name: "EARTH", jp: "地球", prefix: "体験を", description: "目的・導線・感情の変化をつなぎ、記憶に残る体験を組み立てる。", color: "#5ee9ff", glow: "#3156ff", size: 62, image: "/planets/earth.jpg", category: "world" as CategoryId },
+  { name: "MARS", jp: "火星", prefix: "遊びを", description: "触れたくなる反応とルールを重ね、直感的な楽しさを実装する。", color: "#f17655", glow: "#d83c2e", size: 54, image: "/planets/mars.jpg", category: "play" as CategoryId },
+  { name: "JUPITER", jp: "木星", prefix: "世界を", description: "空間・物語・行動を束ね、訪れる理由のある世界を立ち上げる。", color: "#e4b48c", glow: "#c16e55", size: 112, image: "/planets/jupiter.jpg", category: "world" as CategoryId },
+  { name: "SATURN", jp: "土星", prefix: "仕組みを", description: "複雑な条件を整理し、アイデアが継続して届く構造へ変える。", color: "#e8d394", glow: "#d49b55", size: 100, image: "/planets/saturn.jpg", category: "system" as CategoryId },
+  { name: "URANUS", jp: "天王星", prefix: "文化を", description: "参加と制作が循環し、関わる人が育てていける場をつくる。", color: "#8ce7e8", glow: "#4eb8ca", size: 82, image: "/planets/uranus.webp", category: "community" as CategoryId },
+  { name: "NEPTUNE", jp: "海王星", prefix: "未来を", description: "まだ名前のない可能性を試作し、次の現実へつながる入口をつくる。", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
 ] as const;
 
 const orbitGeometry = { centerX: 0, centerY: 50, radiusX: 96, radiusY: 32.5 } as const;
@@ -200,11 +199,20 @@ export default function PortfolioExperience() {
   };
 
   const handleOrbitPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--pointer-x", `${((event.clientX - bounds.left) / bounds.width) * 100}%`);
+    event.currentTarget.style.setProperty("--pointer-y", `${((event.clientY - bounds.top) / bounds.height) * 100}%`);
     if (!isDragging || dragRef.current.pointerId !== event.pointerId) return;
     const deltaX = event.clientX - dragRef.current.startX;
     const deltaY = event.clientY - dragRef.current.startY;
     if (Math.abs(deltaX) + Math.abs(deltaY) > 7) dragRef.current.moved = true;
     setDragOffset(Math.max(-150, Math.min(150, deltaX * 0.32 + deltaY * 0.1)));
+  };
+
+  const resetOrbitPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (isDragging) return;
+    event.currentTarget.style.setProperty("--pointer-x", "72%");
+    event.currentTarget.style.setProperty("--pointer-y", "58%");
   };
 
   const finishOrbitDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -220,7 +228,6 @@ export default function PortfolioExperience() {
   const navProgress = Math.max(0, sections.findIndex((section) => section.id === activeSection) / (sections.length - 1));
   const makerVisible = activeSection === "top" || activeSection === "creation";
   const activePlanet = solarPlanets[activeSolar];
-  const activeSolarProject = projects[activeSolar];
 
   return (
     <>
@@ -280,17 +287,14 @@ export default function PortfolioExperience() {
                   "--star-x": `${(index * 37 + 11) % 100}%`,
                   "--star-y": `${(index * 61 + 7) % 100}%`,
                   "--star-size": `${1 + (index % 4) * 0.55}px`,
+                  "--star-color": index % 11 === 0 ? "#ff9bdd" : index % 7 === 0 ? "#83b8ff" : "#ffffff",
                   "--star-delay": `${-(index % 9) * 0.47}s`,
                   "--star-duration": `${2.3 + (index % 6) * 0.48}s`,
                 } as CSSProperties}
               />
             ))}
           </div>
-          <header className="section-header section-header-light" data-reveal><p><span>02</span> / CREATION</p><p>ROTATE THE SOLAR SYSTEM</p></header>
-          <div className="creation-heading" data-reveal>
-            <h2 id="creation-title">8つの軌道、<br /><span>8つの「つくる。」</span></h2>
-            <div><p>太陽を中心に、異なる領域がひとつの世界を形づくる。</p><p className="drag-guide"><i aria-hidden="true">↔</i> DRAG / SWIPE TO ROTATE</p></div>
-          </div>
+          <header className="section-header section-header-light"><p id="creation-title"><span>02</span> / CREATION</p><p>INTERACTIVE SOLAR FIELD</p></header>
 
           <div className="solar-layout">
             <div
@@ -307,6 +311,7 @@ export default function PortfolioExperience() {
               onPointerMove={handleOrbitPointerMove}
               onPointerUp={finishOrbitDrag}
               onPointerCancel={finishOrbitDrag}
+              onPointerLeave={resetOrbitPointer}
               onKeyDown={(event) => {
                 if (["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(event.key)) event.preventDefault();
                 if (event.key === "ArrowRight" || event.key === "ArrowDown") selectSolarPlanet(activeSolar + 1);
@@ -355,8 +360,20 @@ export default function PortfolioExperience() {
             <article className="solar-transmission" key={activeSolar} aria-live="polite">
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
-              <h3>{activePlanet.prefix}<br /><span>つくる。</span></h3>
-              <p>{activeSolarProject.description}</p>
+              <div className="transmission-title-slot" aria-hidden="true" />
+              <p>{activePlanet.description}</p>
+              <div className="planet-selector" aria-label="惑星を直接選択">
+                {solarPlanets.map((planet, index) => (
+                  <button
+                    type="button"
+                    key={planet.name}
+                    className={index === activeSolar ? "is-active" : ""}
+                    onClick={() => selectSolarPlanet(index)}
+                    aria-label={`${planet.jp}を選択`}
+                    aria-pressed={index === activeSolar}
+                  ><span>{String(index + 1).padStart(2, "0")}</span></button>
+                ))}
+              </div>
               <div className="transmission-unlock"><span>CONNECTED FIELD</span><strong>{activePlanet.category.toUpperCase()}</strong></div>
               <div className="orbit-controls"><button type="button" onClick={() => selectSolarPlanet(activeSolar - 1)} aria-label="前の惑星">←</button><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><button type="button" onClick={() => selectSolarPlanet(activeSolar + 1)} aria-label="次の惑星">→</button></div>
             </article>

@@ -32,13 +32,15 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /<title>塩澤 正高 \/ Masataka Shiozawa — つくる。 \| Project Manager \/ Director<\/title>/i);
   assert.match(html, /name="robots" content="noindex, nofollow"/i);
   assert.match(html, />つくる。</);
-  assert.match(html, /DRAG \/ SWIPE TO ROTATE/);
+  assert.doesNotMatch(html, /8つの軌道|8つの「つくる。」|DRAG \/ SWIPE TO ROTATE/);
+  assert.match(html, /INTERACTIVE SOLAR FIELD/);
   assert.match(html, /MERCURY/);
   assert.match(html, /NEPTUNE/);
   assert.match(html, /\/planets\/earth\.jpg/);
   assert.match(html, /\/planets\/saturn\.jpg/);
   assert.match(html, /OBSERVATION IMAGERY \/ NASA・JPL・GSFC/);
   assert.match(html, /FRONT \/ ALIGN/);
+  assert.match(html, /目的・導線・感情の変化/);
   assert.equal((html.match(/class="solar-planet/g) ?? []).length, 8);
   assert.equal((html.match(/is-behind-sun/g) ?? []).length, 4);
   assert.equal((html.match(/is-in-front/g) ?? []).length, 4);
