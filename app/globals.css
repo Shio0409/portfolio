@@ -268,7 +268,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 
 .solar-sun {
   position: absolute;
-  z-index: 62;
+  z-index: 560;
   top: 50%;
   left: 0;
   display: grid;
@@ -366,21 +366,23 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   background: rgba(2,3,10,.66);
   font: 700 6px/1 var(--display-font);
   letter-spacing: .13em;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--planet-label-scale));
+  transform-origin: center;
   white-space: nowrap;
   backdrop-filter: blur(5px);
 }
 .solar-planet > b { top: auto; bottom: calc(100% + 11px); color: var(--planet-color); font-size: 11px; letter-spacing: .03em; }
+.solar-planet.is-behind-sun > span,.solar-planet.is-behind-sun > b { opacity:.28; }
 .solar-planet.is-active .planet-surface { box-shadow: inset -18px -10px 28px rgba(0,0,0,.54), 0 0 62px var(--planet-glow), 0 0 0 1px rgba(255,255,255,.18); }
 .solar-planet.is-active.planet-6 .planet-surface,.solar-planet.is-active.planet-7 .planet-surface { box-shadow:none;filter:drop-shadow(0 0 26px var(--planet-glow)); }
 .solar-planet.is-active > b { color: var(--white); }
 
 .solar-camera {
   position: absolute;
-  z-index: 150;
+  z-index: 1200;
   top: 62%;
   left: 79%;
-  width: 168px;
+  width: 224px;
   aspect-ratio: 1;
   border: 1px solid rgba(94,233,255,.44);
   border-radius: 50%;
@@ -388,9 +390,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   pointer-events: none;
 }
 .solar-camera::before,.solar-camera::after { position:absolute;top:50%;left:50%;background:rgba(94,233,255,.48);box-shadow:0 0 11px rgba(94,233,255,.25);content:"";transform:translate(-50%,-50%); }
-.solar-camera::before{width:206px;height:1px}.solar-camera::after{width:1px;height:206px}.solar-camera i{position:absolute;inset:12px;border:1px dashed rgba(94,233,255,.38);border-radius:50%;animation:orbit-dash 10s linear infinite}.solar-camera span{position:absolute;top:calc(100% + 17px);left:50%;color:var(--cyan);font:700 6px/1 var(--display-font);letter-spacing:.17em;transform:translateX(-50%);white-space:nowrap}
+.solar-camera::before{width:274px;height:1px}.solar-camera::after{width:1px;height:274px}.solar-camera i{position:absolute;inset:15px;border:1px dashed rgba(94,233,255,.38);border-radius:50%;animation:orbit-dash 10s linear infinite}.solar-camera span{position:absolute;top:calc(100% + 17px);left:50%;color:var(--cyan);font:700 6px/1 var(--display-font);letter-spacing:.17em;transform:translateX(-50%);white-space:nowrap}
 .solar-camera span::before { display:inline-block;width:5px;aspect-ratio:1;margin-right:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 11px var(--cyan);content:"";vertical-align:middle; }
-.solar-source-credit { position:absolute;z-index:151;bottom:20px;left:22px;margin:0;color:rgba(210,218,246,.45);font:700 6px/1 var(--display-font);letter-spacing:.16em;pointer-events:none; }
+.solar-source-credit { position:absolute;z-index:1201;bottom:20px;left:22px;margin:0;color:rgba(210,218,246,.45);font:700 6px/1 var(--display-font);letter-spacing:.16em;pointer-events:none; }
 
 .solar-transmission {
   position: relative;
@@ -458,9 +460,9 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .solar-planet { width: calc(var(--planet-size) * .72); }
   .solar-planet > span { display: none; }
   .solar-planet > b { padding: 4px 5px; font-size: 8px; }
-  .solar-camera { left: 79%; width: 124px; }
-  .solar-camera::before { width: 150px; }
-  .solar-camera::after { height: 150px; }
+  .solar-camera { left: 79%; width: 156px; }
+  .solar-camera::before { width: 190px; }
+  .solar-camera::after { height: 190px; }
   .solar-source-credit { bottom:12px;left:20px;font-size:5px; }
   .solar-transmission { min-height: 500px; margin: 0 20px 120px; padding: 25px; }
   .solar-transmission h3 { font-size: 45px; }

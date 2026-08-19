@@ -322,20 +322,24 @@ export default function PortfolioExperience() {
                 const frontEase = Math.pow(depth, 2.65);
                 const x = Math.cos(radians) * radiusX * (1 - frontEase) + 79 * frontEase;
                 const y = (50 + Math.sin(radians) * radiusY) * (1 - frontEase) + 62 * frontEase;
+                const normalizedAngle = ((angle % 360) + 540) % 360 - 180;
+                const alignment = Math.max(0, 1 - Math.abs(normalizedAngle) / 45);
+                const planetScale = 0.09 + Math.pow(depth, 4.2) * 1.05 + Math.pow(alignment, 1.7) * 2.55;
                 const isActive = index === activeSolar && Math.abs(dragOffset) < 14;
                 return (
                   <button
-                    className={`solar-planet planet-${index + 1} ${isActive ? "is-active" : ""}`}
+                    className={`solar-planet planet-${index + 1} ${depth < 0.56 ? "is-behind-sun" : "is-in-front"} ${isActive ? "is-active" : ""}`}
                     type="button"
                     key={planet.name}
                     aria-label={`${planet.jp}・${planet.prefix}つくる。を表示`}
                     aria-pressed={isActive}
                     onClick={() => { if (!dragRef.current.moved) selectSolarPlanet(index); }}
                     style={{
-                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": 0.25 + Math.pow(depth, 2.2) * 2.1,
-                      "--planet-opacity": 0.18 + depth * 0.82, "--planet-color": planet.color,
-                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 100 + index + 10),
-                      "--planet-size": `${planet.size}px`, "--planet-blur": `${(1 - depth) * 3.2}px`,
+                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": planetScale,
+                      "--planet-label-scale": Math.min(1, 1 / planetScale),
+                      "--planet-opacity": 0.08 + Math.pow(depth, 2.8) * 0.92, "--planet-color": planet.color,
+                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 1000 + alignment * 100),
+                      "--planet-size": `${planet.size}px`, "--planet-blur": `${Math.pow(1 - depth, 1.2) * 7}px`,
                       "--planet-image": `url(${planet.image})`, "--planet-rotation": `${48 + index * 6}s`,
                     } as CSSProperties}
                   >
