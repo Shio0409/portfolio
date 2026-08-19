@@ -369,7 +369,7 @@ export default function PortfolioExperience() {
           <header className="section-header section-header-light" data-reveal><p><span>03</span> / CAREER</p><p>EXPERIENCE LOG</p></header>
           <div className="career-header">
             <h2 id="career-title" ref={careerHeadingRef} data-reveal>経験は、次の判断を<br /><span>つくっていく。</span></h2>
-            <p data-reveal>点在していた経験がつながり、現在のProject Manager / Directorへ。スクロールとともに、獲得した視点をたどります。</p>
+            <p data-reveal>心理学、教育、教室運営、事業づくり。人と組織の変化に向き合った経験がつながり、現在のProject Manager / Directorへ。</p>
           </div>
           <div className="career-map" ref={careerMapRef} style={{ "--career-progress": careerProgress } as CSSProperties}>
             <div className="career-track" aria-hidden="true">
@@ -380,7 +380,14 @@ export default function PortfolioExperience() {
                 <li key={`${event.title}-${index}`} data-reveal>
                   <article>
                     <div className="career-event-meta"><span>{event.year}</span><span>{event.type}</span></div>
-                    <h3>{event.title}</h3><p>{event.description}</p>
+                    <h3>{event.title}</h3>
+                    {event.role && <p className="career-role">{event.role}</p>}
+                    <p className="career-description">{event.description}</p>
+                    {event.highlights && (
+                      <ul className="career-highlights" aria-label={`${event.title}の実績`}>
+                        {event.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                      </ul>
+                    )}
                     <div className="unlock"><i /> SKILL UNLOCKED — {event.unlocked}</div>
                   </article>
                   <span className="career-node" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>

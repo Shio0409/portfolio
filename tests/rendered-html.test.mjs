@@ -52,6 +52,13 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /x\.com\/taque_0409/);
   assert.match(html, /sio-shop\.booth\.pm/);
   assert.match(html, /usr_8707d220-1408-4a8c-b25c-6a3b14a4c710/);
+  assert.match(html, /群馬県立前橋高等学校/);
+  assert.match(html, /神奈川大学 人間科学部/);
+  assert.match(html, /プレミアムティーチャー賞/);
+  assert.match(html, /利用児童 15 → 約120名/);
+  assert.match(html, /補助金 年4,000万円規模/);
+  assert.match(html, /compass 設立/);
+  assert.match(html, /継続黒字/);
   assert.match(html, /id="creation"/);
   assert.match(html, /id="career"/);
   assert.match(html, /id="future"/);

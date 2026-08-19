@@ -31,7 +31,9 @@ export type CareerEvent = {
   year: string;
   type: string;
   title: string;
+  role?: string;
   description: string;
+  highlights?: string[];
   unlocked: string;
 };
 
@@ -203,39 +205,46 @@ export const projects: Project[] = [
 
 export const careerEvents: CareerEvent[] = [
   {
-    year: "20XX",
-    type: "ORIGIN",
-    title: "[CAREER EVENT 01]",
-    description: "[この時期の出来事、役割、得た視点を追加します。]",
-    unlocked: "CURIOSITY",
+    year: "EDUCATION 01",
+    type: "HIGH SCHOOL",
+    title: "群馬県立前橋高等学校",
+    description: "群馬県立前橋高等学校で学ぶ。",
+    unlocked: "FOUNDATION",
   },
   {
-    year: "20XX",
-    type: "EXPERIENCE",
-    title: "[CAREER EVENT 02]",
-    description: "[この時期の出来事、役割、得た視点を追加します。]",
-    unlocked: "PLANNING",
+    year: "EDUCATION 02",
+    type: "UNIVERSITY",
+    title: "神奈川大学 人間科学部",
+    role: "人間科学科 / 心理学専攻",
+    description: "心理学を専攻し、実験プログラミングを通じて、人の行動を観察・検証する方法に触れる。",
+    unlocked: "RESEARCH",
   },
   {
-    year: "20XX",
-    type: "BUILD",
-    title: "[CAREER EVENT 03]",
-    description: "[この時期の出来事、役割、得た視点を追加します。]",
-    unlocked: "MAKING",
+    year: "TEACHING",
+    type: "PART-TIME",
+    title: "明光義塾",
+    role: "アルバイト講師",
+    description: "小学生から高校生までの受験生を個別指導。長期休暇には集団授業も担当し、一人ひとりに合わせた学びを設計した。",
+    highlights: ["小学生〜高校生", "個別・集団授業", "プレミアムティーチャー賞"],
+    unlocked: "COMMUNICATION",
   },
   {
-    year: "20XX",
-    type: "CONNECT",
-    title: "[CAREER EVENT 04]",
-    description: "[この時期の出来事、役割、得た視点を追加します。]",
-    unlocked: "DIRECTION",
+    year: "OPERATIONS",
+    type: "FULL-TIME",
+    title: "教育人間科学研究所",
+    role: "正社員第一号 / 教室長代理 / プログラミング主任講師",
+    description: "FAMよこはまアフタースクールの運営を担い、教室・事業・プログラミング教育の成長を推進。民間学童から、横浜市の補助を受けて運営する体制へ発展させた。",
+    highlights: ["利用児童 15 → 約120名", "補助金 年4,000万円規模", "講座 1クラス約6名 → 3クラス・計30名"],
+    unlocked: "SCALE & OPERATIONS",
   },
   {
-    year: "NOW",
-    type: "INTEGRATE",
-    title: "PROJECT MANAGER / DIRECTOR",
-    description: "異なる専門性をつなぎ、アイデアを体験できる状態まで導く。",
-    unlocked: "EXPERIENCE DESIGN",
+    year: "VENTURE",
+    type: "FOUNDER",
+    title: "compass 設立",
+    role: "小学生向けプログラミング教室 / 創設・運営",
+    description: "土日に学べる小学生向けプログラミング教室を設立。継続的に黒字を維持しながら、現在も事業を拡大している。",
+    highlights: ["継続黒字", "現在も拡大中"],
+    unlocked: "ENTREPRENEURSHIP",
   },
 ];
 

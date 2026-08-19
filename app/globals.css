@@ -428,8 +428,12 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 .career-events > li:nth-child(odd) article { margin-right:72px;grid-column:1; }.career-events > li:nth-child(even) article { margin-left:72px;grid-column:2; }
 .career-event-meta { display:flex;padding-bottom:14px;justify-content:space-between;border-bottom:1px solid var(--line);color:var(--muted);font:700 8px/1 var(--display-font);letter-spacing:.15em; }
 .career-event-meta span:first-child { color:var(--cyan); }
-.career-events h3 { margin:44px 0 20px;font:700 clamp(28px,3vw,48px)/1 var(--display-font);letter-spacing:-.06em; }
-.career-events article > p { min-height:56px;margin:0;color:var(--muted);font-size:11px;line-height:1.85; }
+.career-events h3 { margin:44px 0 12px;font:700 clamp(28px,3vw,48px)/1 var(--display-font);letter-spacing:-.06em; }
+.career-role { margin:0 0 24px;color:var(--cyan);font:700 8px/1.55 var(--display-font);letter-spacing:.1em; }
+.career-description { min-height:56px;margin:0;color:var(--muted);font-size:11px;line-height:1.85; }
+.career-highlights { display:grid;margin:26px 0 0;padding:0;border-top:1px solid var(--line);list-style:none; }
+.career-highlights li { position:relative;padding:13px 4px 13px 17px;border-bottom:1px solid var(--line);color:rgba(245,247,255,.82);font:700 8px/1.5 var(--display-font);letter-spacing:.08em; }
+.career-highlights li::before { position:absolute;top:17px;left:2px;width:5px;aspect-ratio:1;border-radius:50%;background:var(--cyan);box-shadow:0 0 9px rgba(94,233,255,.7);content:""; }
 .unlock { display:flex;margin-top:35px;padding-top:15px;align-items:center;gap:8px;border-top:1px solid var(--line);font:700 7px/1 var(--display-font);letter-spacing:.12em; }
 .unlock i { width:7px;aspect-ratio:1;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink); }
 .career-node { position:absolute;z-index:3;top:14px;left:50%;display:grid;width:44px;aspect-ratio:1;place-items:center;border:1px solid rgba(245,247,255,.28);border-radius:50%;background:var(--black);box-shadow:0 0 0 7px rgba(3,5,13,.78);transform:translateX(-50%);font:700 7px/1 var(--display-font);letter-spacing:.08em; }
