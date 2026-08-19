@@ -62,10 +62,11 @@ const contactChannels = [
   { label: "EMAIL", value: "solt.0409@gmail.com", href: "mailto:solt.0409@gmail.com", external: false },
   { label: "DISCORD", value: "sio0409", href: null, external: false },
   { label: "BOOTH", value: "sio-shop", href: "https://sio-shop.booth.pm/", external: true },
-  { label: "VRCHAT", value: "USER PROFILE", href: "https://vrchat.com/home/user/usr_8707d220-1408-4a8c-b25c-6a3b14a4c710", external: true },
+  { label: "VRCHAT", value: "Sio0409", href: "https://vrchat.com/home/user/usr_8707d220-1408-4a8c-b25c-6a3b14a4c710", external: true },
 ] as const;
 
 type LoaderState = "visible" | "leaving" | "hidden";
+type MakerPose = { x: number; y: number; scale: number; progress: number; visible: boolean };
 
 function wrapIndex(index: number, length: number) {
   return ((index % length) + length) % length;
@@ -97,7 +98,7 @@ export default function PortfolioExperience() {
   const [activeSolar, setActiveSolar] = useState(2);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [makerDocked, setMakerDocked] = useState(false);
+  const [makerPose, setMakerPose] = useState<MakerPose>({ x: 0, y: 0, scale: 1, progress: 0, visible: true });
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
   const creationRef = useRef<HTMLElement>(null);
@@ -116,16 +117,46 @@ export default function PortfolioExperience() {
 
   useEffect(() => {
     let frame = 0;
-    const updateMakerDock = () => {
+    const updateMakerJourney = () => {
       const creation = creationRef.current;
       if (!creation) return;
-      setMakerDocked(creation.getBoundingClientRect().top <= 1);
+
+      const rect = creation.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const progress = Math.min(1, Math.max(0, (viewportHeight - rect.top) / viewportHeight));
+      const gutter = Math.min(74, Math.max(24, viewportWidth * .042));
+      let targetX = gutter * -.62;
+      let targetY = -viewportHeight + 286;
+      let targetScale = .42;
+
+      if (viewportWidth <= 1050) {
+        targetY = -viewportHeight + 228;
+        targetScale = .5;
+      }
+      if (viewportWidth <= 760) {
+        targetX = -22;
+        targetY = -viewportHeight + 208;
+        targetScale = .46;
+      } else if (viewportHeight <= 680) {
+        targetY = -viewportHeight + 236;
+        targetScale = .38;
+      }
+
+      const dockedScroll = Math.min(0, rect.top);
+      setMakerPose({
+        x: Number((targetX * progress).toFixed(2)),
+        y: Number((targetY * progress + dockedScroll).toFixed(2)),
+        scale: Number((1 + (targetScale - 1) * progress).toFixed(4)),
+        progress: Number(progress.toFixed(4)),
+        visible: rect.bottom > -80,
+      });
     };
     const schedule = () => {
       window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(updateMakerDock);
+      frame = window.requestAnimationFrame(updateMakerJourney);
     };
-    updateMakerDock();
+    updateMakerJourney();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
@@ -255,9 +286,8 @@ export default function PortfolioExperience() {
   };
 
   const navProgress = Math.max(0, sections.findIndex((section) => section.id === activeSection) / (sections.length - 1));
-  const makerVisible = !makerDocked && (activeSection === "top" || activeSection === "creation");
-  const makerInCreationPose = activeSection === "creation" || makerDocked;
   const activePlanet = solarPlanets[activeSolar];
+  const makerPrefixOpacity = Math.min(1, Math.max(0, (makerPose.progress - .42) / .36));
 
   return (
     <>
@@ -275,18 +305,24 @@ export default function PortfolioExperience() {
 
       <main id="main-content" aria-hidden={loaderState !== "hidden"}>
         <div
-          className={`fixed-making-statement ${makerVisible ? "" : "is-hidden"} ${makerInCreationPose ? "is-creation" : ""}`}
-          style={{ "--making-accent": activePlanet.color } as CSSProperties}
-          aria-hidden={makerDocked}
+          className={`fixed-making-statement ${makerPose.visible ? "" : "is-hidden"} ${makerPose.progress > .02 ? "is-creation" : ""}`}
+          style={{
+            "--making-accent": activePlanet.color,
+            "--maker-transform": `translate3d(${makerPose.x}px, ${makerPose.y}px, 0) scale(${makerPose.scale})`,
+          } as CSSProperties}
+          aria-hidden={!makerPose.visible}
         >
-          <p className={`fixed-making-prefix ${activeSection === "creation" ? "is-visible" : ""}`}>{activePlanet.prefix}</p>
+          <p
+            className="fixed-making-prefix"
+            style={{ opacity: makerPrefixOpacity, transform: `translateX(${(1 - makerPrefixOpacity) * 35}px)` }}
+          >{activePlanet.prefix}</p>
           <h1 id="hero-title" className="fixed-maker-word">つくる。</h1>
         </div>
 
         <div
-          className={`career-character career-character-overlay ${careerCharacterVisible ? "is-visible" : ""}`}
+          className={`career-spacecraft ${careerCharacterVisible ? "is-visible" : ""}`}
           aria-hidden="true"
-        ><span className="traveler-core" /><span className="traveler-ring" /><b>MS</b></div>
+        ><span /><b>MS-01 / ON COURSE</b></div>
 
         <section className="cosmic-hero page-section" id="top" aria-labelledby="hero-title">
           <div className="cosmic-sky" aria-hidden="true"><i /><i /><i /><i /></div>
@@ -394,9 +430,7 @@ export default function PortfolioExperience() {
             <article className="solar-transmission" key={activeSolar} aria-live="polite">
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
-              <div className={`transmission-docked-title ${makerDocked ? "is-visible" : ""}`} aria-hidden="true">
-                <p>{activePlanet.prefix}</p><strong>つくる。</strong>
-              </div>
+              <div className="transmission-title-slot" aria-hidden="true" />
               <p>{activePlanet.description}</p>
               <div className="planet-selector" aria-label="惑星を直接選択">
                 {solarPlanets.map((planet, index) => (

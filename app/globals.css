@@ -678,10 +678,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 }
 .solar-transmission .transmission-meta { padding-bottom:13px;font-size:7px; }
 .solar-transmission .transmission-signal { margin:15px 0 0; }
-.transmission-docked-title { display:flex;height:clamp(74px,10.5vh,97px);align-items:flex-end;justify-content:flex-end;gap:clamp(2px,.45vw,7px);flex:none;opacity:0;transform:translateY(8px);transition:opacity .18s ease,transform .45s cubic-bezier(.22,1,.36,1);white-space:nowrap; }
-.transmission-docked-title.is-visible { opacity:1;transform:none;transition-delay:.06s; }
-.transmission-docked-title p { margin:0 0 .02em;color:var(--category-accent);font:500 clamp(25px,2.6vw,39px)/.8 var(--display-font);letter-spacing:-.08em;text-shadow:0 6px 35px rgba(0,0,0,.72); }
-.transmission-docked-title strong { color:#fff;font:700 clamp(52px,5.25vw,82px)/.72 var(--display-font);letter-spacing:-.1em;text-shadow:0 8px 45px rgba(2,4,18,.55); }
+.transmission-title-slot { height:clamp(74px,10.5vh,97px);flex:none; }
 .solar-transmission > p:not(.transmission-signal) { max-width:360px;font-size:10px;line-height:1.78; }
 .planet-selector { display:grid;margin:14px 0 0;gap:5px;grid-template-columns:repeat(8,1fr); }
 .planet-selector button { position:relative;display:grid;height:20px;place-items:center;border:1px solid rgba(245,247,255,.11);color:rgba(245,247,255,.38);overflow:hidden;transition:color .25s ease,border-color .25s ease,background .25s ease,transform .25s ease; }
@@ -699,7 +696,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 
 @media (max-width: 1050px) {
   .solar-transmission { top:66px;width:320px;height:300px;padding:19px 20px 43px; }
-  .transmission-docked-title { height:68px; }
+  .transmission-title-slot { height:68px; }
   .fixed-making-statement.is-creation { transform:translate3d(calc(var(--page-gutter) * -.62),calc(-100svh + 228px),0) scale(.5); }
 }
 
@@ -720,9 +717,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .solar-transmission { top:66px;right:20px;width:calc(100% - 40px);height:clamp(300px,42svh,335px);min-height:0;margin:0;padding:17px 18px 44px; }
   .solar-transmission .transmission-meta { padding-bottom:10px;font-size:6px; }
   .solar-transmission .transmission-signal { margin-top:10px;font-size:6px; }
-  .transmission-docked-title { height:64px; }
-  .transmission-docked-title p { font-size:clamp(19px,6vw,27px); }
-  .transmission-docked-title strong { font-size:clamp(40px,11.5vw,53px); }
+  .transmission-title-slot { height:64px; }
   .solar-transmission > p:not(.transmission-signal) { font-size:9.5px;line-height:1.65; }
   .planet-selector { margin-top:9px;gap:3px; }
   .planet-selector button { height:17px; }
@@ -733,7 +728,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 @media (max-height: 680px) and (min-width: 761px) {
   .fixed-making-statement.is-creation { transform:translate3d(calc(var(--page-gutter) * -.62),calc(-100svh + 236px),0) scale(.38); }
   .solar-transmission { top:70px;height:330px; }
-  .transmission-docked-title { height:67px; }
+  .transmission-title-slot { height:67px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1041,4 +1036,84 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .future-principles small { margin-bottom:15px; }
   .future-principles strong { font-size:31px; }
   .contact-block { margin-top:120px; }
+}
+
+/* Seamless maker journey: one element travels, docks, then leaves with CREATION. */
+.fixed-making-statement,
+.fixed-making-statement.is-creation,
+.fixed-making-statement.is-hidden {
+  transform:var(--maker-transform,translate3d(0,0,0) scale(1));
+  transition:opacity .2s linear;
+  will-change:transform,opacity;
+}
+.fixed-making-statement.is-hidden { opacity:0; }
+.fixed-making-prefix {
+  transition:color .45s ease;
+  will-change:opacity,transform;
+}
+
+/* CAREER / Masataka's spacecraft moves along the central experience route. */
+.career-spacecraft {
+  position:fixed;
+  z-index:180;
+  top:50%;
+  left:50%;
+  width:clamp(94px,8.4vw,126px);
+  aspect-ratio:2 / 3;
+  opacity:0;
+  filter:blur(8px);
+  transform:translate(-50%,-50%) scale(.82);
+  transition:opacity .5s ease,filter .5s ease,transform .72s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+.career-spacecraft.is-visible {
+  opacity:1;
+  filter:none;
+  transform:translate(-50%,-50%) scale(1);
+}
+.career-spacecraft > span {
+  position:absolute;
+  inset:0;
+  background:url("/images/career-spacecraft.png") center / contain no-repeat;
+  filter:drop-shadow(0 18px 22px rgba(0,0,0,.58)) drop-shadow(0 0 15px rgba(74,119,255,.2));
+  animation:spacecraft-drift 3.8s ease-in-out infinite;
+}
+.career-spacecraft::before {
+  position:absolute;
+  z-index:-1;
+  top:-42px;
+  left:50%;
+  width:2px;
+  height:54px;
+  background:linear-gradient(to top,rgba(94,233,255,.72),transparent);
+  box-shadow:-18px 7px 12px rgba(90,115,255,.25),18px 7px 12px rgba(90,115,255,.25);
+  content:"";
+  opacity:.68;
+  transform:translateX(-50%);
+  animation:spacecraft-thrust 1.6s ease-in-out infinite;
+}
+.career-spacecraft b {
+  position:absolute;
+  top:calc(100% + 10px);
+  left:50%;
+  width:max-content;
+  padding:6px 8px;
+  border:1px solid rgba(94,233,255,.2);
+  color:rgba(222,234,255,.76);
+  background:rgba(3,7,20,.72);
+  font:700 6px/1 var(--display-font);
+  letter-spacing:.16em;
+  transform:translateX(-50%);
+  backdrop-filter:blur(8px);
+}
+@keyframes spacecraft-drift { 50% { transform:translateY(4px);filter:brightness(1.04); } }
+@keyframes spacecraft-thrust { 50% { height:68px;opacity:.34; } }
+
+@media (max-width:760px) {
+  .career-spacecraft { width:clamp(70px,20vw,86px); }
+  .career-spacecraft b { top:calc(100% + 6px);font-size:5px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .career-spacecraft > span,.career-spacecraft::before { animation:none!important; }
 }

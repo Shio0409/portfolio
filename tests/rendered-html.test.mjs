@@ -45,7 +45,8 @@ test("server-renders the portfolio experience", async () => {
   assert.equal((html.match(/is-behind-sun/g) ?? []).length, 4);
   assert.equal((html.match(/is-in-front/g) ?? []).length, 4);
   assert.equal((html.match(/is-outgoing/g) ?? []).length, 2);
-  assert.match(html, /career-character career-character-overlay/);
+  assert.match(html, /class="career-spacecraft/);
+  assert.match(html, /MS-01 \/ ON COURSE/);
   assert.doesNotMatch(html, /category-tabs|project-grid|project-dialog|career-next/);
   assert.match(html, /og-masataka-shiozawa\.png/);
   assert.match(html, /MASATAKA SHIOZAWA/);
@@ -54,6 +55,7 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /x\.com\/taque_0409/);
   assert.match(html, /sio-shop\.booth\.pm/);
   assert.match(html, /usr_8707d220-1408-4a8c-b25c-6a3b14a4c710/);
+  assert.match(html, />Sio0409</);
   assert.match(html, /群馬県立前橋高等学校/);
   assert.match(html, /神奈川大学 人間科学部/);
   assert.match(html, /プレミアムティーチャー賞/);
@@ -71,9 +73,10 @@ test("server-renders the portfolio experience", async () => {
 });
 
 test("keeps editable content separate from the UI", async () => {
-  const [data, experience, page, layout, packageJson] = await Promise.all([
+  const [data, experience, styles, page, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/portfolio-data.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/PortfolioExperience.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
@@ -89,8 +92,11 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /angle: -30, scale: 0\.2/);
   assert.match(experience, /angle: -288, scale: 7\.2, opacity: 0/);
   assert.match(experience, /fixed-making-statement/);
-  assert.match(experience, /makerDocked/);
-  assert.match(experience, /transmission-docked-title/);
+  assert.match(experience, /makerPose/);
+  assert.match(experience, /dockedScroll/);
+  assert.match(experience, /transmission-title-slot/);
+  assert.match(experience, /career-spacecraft/);
+  assert.match(styles, /career-spacecraft\.png/);
   assert.match(experience, /headingHasArrived.*0\.22/);
   assert.match(experience, /futureHasArrived.*0\.92/);
   assert.match(experience, /careerCharacterVisible/);
