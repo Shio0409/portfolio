@@ -29,10 +29,11 @@ test("server-renders the portfolio experience", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>\[NAME\] — Project Manager \/ Director<\/title>/i);
+  assert.match(html, /<title>\[NAME\] — つくる。 \| Project Manager \/ Director<\/title>/i);
   assert.match(html, /name="robots" content="noindex, nofollow"/i);
-  assert.match(html, /体験を、/);
-  assert.match(html, /IDEAS INTO EXPERIENCES/);
+  assert.match(html, />つくる。</);
+  assert.match(html, /DRAG \/ SWIPE THE ORBIT/);
+  assert.match(html, /og\.png/);
   assert.match(html, /id="creation"/);
   assert.match(html, /id="career"/);
   assert.match(html, /id="future"/);

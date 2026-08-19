@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import PortfolioExperience from "./PortfolioExperience";
 
 export const metadata: Metadata = {
-  title: "[NAME] — Project Manager / Director",
+  title: "[NAME] — つくる。 | Project Manager / Director",
   description:
-    "企画、デザイン、技術、コミュニティを横断し、アイデアを体験へ導くProject Manager / Directorのポートフォリオ。",
+    "メタバースを舞台に、領域をつなぎ、まだ名前のない体験を実装するProject Manager / Directorのポートフォリオ。",
   robots: {
     index: false,
     follow: false,
