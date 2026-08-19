@@ -37,6 +37,17 @@ const solarPlanets = [
   { name: "NEPTUNE", jp: "海王星", prefix: "未来を", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
 ] as const;
 
+const orbitPass = [
+  { x: 79, y: 62, scale: 3.7, opacity: 1, blur: 0, z: 1100, label: 1 },
+  { x: 55, y: 42, scale: 0.62, opacity: 0.72, blur: 0.8, z: 480, label: 0.48 },
+  { x: 25, y: 31, scale: 0.25, opacity: 0.38, blur: 2.3, z: 260, label: 0.16 },
+  { x: 4, y: 36, scale: 0.13, opacity: 0.2, blur: 4, z: 130, label: 0 },
+  { x: -14, y: 52, scale: 0.08, opacity: 0.1, blur: 6, z: 70, label: 0 },
+  { x: -20, y: 76, scale: 0.04, opacity: 0, blur: 8, z: 40, label: 0 },
+  { x: 109, y: 106, scale: 6.7, opacity: 0, blur: 1.4, z: 1680, label: 0 },
+  { x: 91, y: 80, scale: 4.95, opacity: 0.7, blur: 0.15, z: 1480, label: 0.08 },
+] as const;
+
 const heroShots = [
   { id: "01", title: "VIRTUAL WORLD", src: "/media/hero-world.mp4" },
   { id: "02", title: "SHARED EXPERIENCE", src: "/media/hero-experience.mp4" },
@@ -61,6 +72,22 @@ function ProjectVisual({ project }: { project: Project }) {
 
 function wrapIndex(index: number, length: number) {
   return ((index % length) + length) % length;
+}
+
+function interpolateOrbitPass(phase: number) {
+  const normalized = wrapIndex(phase, orbitPass.length);
+  const fromIndex = Math.floor(normalized);
+  const toIndex = (fromIndex + 1) % orbitPass.length;
+  const progress = normalized - fromIndex;
+  const from = orbitPass[fromIndex];
+  const to = orbitPass[toIndex];
+  const mix = (start: number, end: number) => start + (end - start) * progress;
+
+  return {
+    x: mix(from.x, to.x), y: mix(from.y, to.y), scale: mix(from.scale, to.scale),
+    opacity: mix(from.opacity, to.opacity), blur: mix(from.blur, to.blur),
+    z: mix(from.z, to.z), label: mix(from.label, to.label),
+  };
 }
 
 export default function PortfolioExperience() {
@@ -314,32 +341,25 @@ export default function PortfolioExperience() {
               <div className="solar-axis" aria-hidden="true"><i /><span>CREATION AXIS</span></div>
               <div className="solar-sun" aria-hidden="true"><i /><span>SUN / 00</span></div>
               {solarPlanets.map((planet, index) => {
-                const angle = (activeSolar - index) * 45 - dragOffset;
-                const radians = (angle * Math.PI) / 180;
-                const radiusX = 24 + index * 8.25;
-                const radiusY = 6.5 + index * 3;
-                const depth = (Math.cos(radians) + 1) / 2;
-                const frontEase = Math.pow(depth, 2.65);
-                const x = Math.cos(radians) * radiusX * (1 - frontEase) + 79 * frontEase;
-                const y = (50 + Math.sin(radians) * radiusY) * (1 - frontEase) + 62 * frontEase;
-                const normalizedAngle = ((angle % 360) + 540) % 360 - 180;
-                const alignment = Math.max(0, 1 - Math.abs(normalizedAngle) / 45);
-                const planetScale = 0.09 + Math.pow(depth, 4.2) * 1.05 + Math.pow(alignment, 1.7) * 2.55;
+                const phase = wrapIndex(index - activeSolar + dragOffset / 45, solarPlanets.length);
+                const pass = interpolateOrbitPass(phase);
                 const isActive = index === activeSolar && Math.abs(dragOffset) < 14;
+                const isBehindSun = pass.z < 560;
+                const isOutgoing = phase > 5;
                 return (
                   <button
-                    className={`solar-planet planet-${index + 1} ${depth < 0.56 ? "is-behind-sun" : "is-in-front"} ${isActive ? "is-active" : ""}`}
+                    className={`solar-planet planet-${index + 1} ${isBehindSun ? "is-behind-sun" : "is-in-front"} ${isOutgoing ? "is-outgoing" : ""} ${isActive ? "is-active" : ""}`}
                     type="button"
                     key={planet.name}
                     aria-label={`${planet.jp}・${planet.prefix}つくる。を表示`}
                     aria-pressed={isActive}
                     onClick={() => { if (!dragRef.current.moved) selectSolarPlanet(index); }}
                     style={{
-                      "--planet-x": `${x}%`, "--planet-y": `${y}%`, "--planet-scale": planetScale,
-                      "--planet-label-scale": Math.min(1, 1 / planetScale),
-                      "--planet-opacity": 0.08 + Math.pow(depth, 2.8) * 0.92, "--planet-color": planet.color,
-                      "--planet-glow": planet.glow, "--planet-z": Math.round(depth * 1000 + alignment * 100),
-                      "--planet-size": `${planet.size}px`, "--planet-blur": `${Math.pow(1 - depth, 1.2) * 7}px`,
+                      "--planet-x": `${pass.x}%`, "--planet-y": `${pass.y}%`, "--planet-scale": pass.scale,
+                      "--planet-label-scale": Math.min(1, 1 / pass.scale), "--planet-label-opacity": pass.label,
+                      "--planet-opacity": pass.opacity, "--planet-color": planet.color,
+                      "--planet-glow": planet.glow, "--planet-z": Math.round(pass.z),
+                      "--planet-size": `${planet.size}px`, "--planet-blur": `${pass.blur}px`,
                       "--planet-image": `url(${planet.image})`, "--planet-rotation": `${48 + index * 6}s`,
                     } as CSSProperties}
                   >

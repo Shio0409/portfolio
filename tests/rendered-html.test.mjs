@@ -42,6 +42,7 @@ test("server-renders the portfolio experience", async () => {
   assert.equal((html.match(/class="solar-planet/g) ?? []).length, 8);
   assert.equal((html.match(/is-behind-sun/g) ?? []).length, 5);
   assert.equal((html.match(/is-in-front/g) ?? []).length, 3);
+  assert.equal((html.match(/is-outgoing/g) ?? []).length, 2);
   assert.match(html, /class="career-character"/);
   assert.match(html, /og-solar\.png/);
   assert.match(html, /id="creation"/);
