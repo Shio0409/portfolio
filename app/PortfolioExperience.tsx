@@ -45,9 +45,15 @@ const orbitPass = [
 ] as const;
 
 const heroShots = [
-  { id: "01", title: "VIRTUAL WORLD", src: "/media/hero-world.mp4" },
-  { id: "02", title: "SHARED EXPERIENCE", src: "/media/hero-experience.mp4" },
-  { id: "03", title: "NEW REALITY", src: "/media/hero-reality.mp4" },
+  { id: "01", title: "VIRTUAL WORLD", image: "/planets/earth.jpg", accent: "#5ee9ff" },
+  { id: "02", title: "SHARED EXPERIENCE", image: "/planets/jupiter.jpg", accent: "#e4b48c" },
+  { id: "03", title: "NEW REALITY", image: "/planets/neptune.webp", accent: "#6a79ff" },
+] as const;
+
+const futurePrinciples = [
+  { jp: "観察する", en: "UNDERSTAND", description: "ユーザー、事業、技術の現実を見つめ、曖昧な課題の輪郭を捉える。" },
+  { jp: "つなぐ", en: "ALIGN", description: "立場の違いを翻訳し、人・優先順位・判断をひとつの方向へそろえる。" },
+  { jp: "届ける", en: "DELIVER", description: "構想を体験へ変え、反応から学びながら継続的に価値を更新する。" },
 ] as const;
 
 const contactChannels = [
@@ -261,7 +267,7 @@ export default function PortfolioExperience() {
           <div className="loader-topline"><span>MASATAKA SHIOZAWA / PORTFOLIO</span><span>METAVERSE LOG — 2026</span></div>
           <div className="loader-orbit" aria-hidden="true"><i /><i /><i /><span>S</span></div>
           <div className="loader-center"><p>ESTABLISHING CONNECTION</p><div className="loader-word"><span>U</span><span>N</span><span>I</span><span>V</span><span>E</span><span>R</span><span>S</span><span>E</span></div></div>
-          <div className="loader-bottom"><span>CLICK / TAP / ENTER TO SKIP</span><div className="loader-progress"><i /></div><span>01 — 100</span></div>
+          <div className="loader-bottom"><span>CLICK / TAP / ENTER TO SKIP</span><div className="loader-progress"><i /></div><span>PRIVATE / NOINDEX</span></div>
         </div>
       )}
 
@@ -280,23 +286,26 @@ export default function PortfolioExperience() {
         <div
           className={`career-character career-character-overlay ${careerCharacterVisible ? "is-visible" : ""}`}
           aria-hidden="true"
-        ><span /><span /><b>YOU</b></div>
+        ><span className="traveler-core" /><span className="traveler-ring" /><b>MS</b></div>
 
         <section className="cosmic-hero page-section" id="top" aria-labelledby="hero-title">
           <div className="cosmic-sky" aria-hidden="true"><i /><i /><i /><i /></div>
           <header className="cosmic-header">
             <button className="cosmic-wordmark" type="button" onClick={() => scrollToSection("top")}><span className="cosmic-mark">S</span><span>MASATAKA SHIOZAWA</span></button>
-            <p>PROJECT MANAGER / DIRECTOR</p><p>PORTFOLIO 2026 — TOKYO</p>
+            <p>PROJECT MANAGER / DIRECTOR</p><p>PRIVATE APPLICATION / 2026</p>
           </header>
-          <div className="cosmic-reel" aria-label="制作映像ショーリール">
+          <div className="cosmic-reel" aria-label="制作世界観ショーリール">
             {heroShots.map((shot, index) => (
-              <figure className={`cosmic-shot shot-${index + 1}`} key={shot.id}>
-                <video autoPlay muted loop playsInline preload="metadata" aria-label={shot.title}><source src={shot.src} type="video/mp4" /></video>
+              <figure
+                className={`cosmic-shot shot-${index + 1}`}
+                key={shot.id}
+                style={{ "--shot-image": `url(${shot.image})`, "--shot-accent": shot.accent } as CSSProperties}
+              >
                 <div className="shot-fallback" aria-hidden="true"><span className="shot-planet" /><span className="shot-horizon" /></div>
                 <figcaption><span>{shot.id} / 03</span><span>{shot.title}</span></figcaption>
               </figure>
             ))}
-            <div className="reel-reticle" aria-hidden="true"><i /><i /><span>PLAYING</span></div>
+            <div className="reel-reticle" aria-hidden="true"><i /><i /><span>OBSERVATION POINT</span></div>
             <div className="reel-progress" aria-hidden="true"><i /><i /><i /></div>
           </div>
           <div className="cosmic-intro"><p className="cosmic-index"><span>01</span> / TOP</p><p className="cosmic-manifesto">境界を越えて、まだ名前のない体験へ。<br />人と世界が出会う瞬間を設計する。</p></div>
@@ -432,7 +441,7 @@ export default function PortfolioExperience() {
                         {event.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
                       </ul>
                     )}
-                    <div className="unlock"><i /> SKILL UNLOCKED — {event.unlocked}</div>
+                    <div className="unlock"><i /> CAPABILITY / {event.unlocked}</div>
                   </article>
                   <span className="career-node" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 </li>
@@ -444,17 +453,26 @@ export default function PortfolioExperience() {
         <section className="future-section page-section" id="future" ref={futureRef} aria-labelledby="future-title">
           <div className="future-nebula" aria-hidden="true" />
           <header className="section-header section-header-light" data-reveal><p><span>04</span> / FUTURE</p><p>THE NEXT TRANSMISSION</p></header>
-          <div className="future-heading" data-reveal><p>THE STORY IS STILL IN PROGRESS</p><h2 id="future-title">完成の先を、<br /><span>つくり続ける。</span></h2></div>
-          <div className="future-grid">
-            <article className="future-card now-card" data-reveal>
-              <div className="future-card-top"><span>01 / NOW</span><span>IN ORBIT</span></div><p className="future-status"><i /> STATUS / IN PROGRESS</p><h3>[CURRENT PROJECT]</h3><p>[現在制作しているプロジェクトの概要を追加します。]</p><div className="future-orbit-visual" aria-hidden="true"><i /><i /><i /><span>62%</span></div>
+          <div className="future-heading" data-reveal><p>NEXT ORBIT / 2026—</p><h2 id="future-title">完成の先を、<br /><span>つくり続ける。</span></h2></div>
+          <div className="future-system" data-reveal>
+            <article className="future-vector">
+              <div className="future-card-top"><span>01 / CURRENT VECTOR</span><span>METAVERSE</span></div>
+              <p className="future-status"><i /> ROLE / PROJECT MANAGER・DIRECTOR</p>
+              <h3>人と判断をつなぎ、<br />体験を前へ進める。</h3>
+              <p>心理学、教育、教室運営、事業づくりで培った視点を、メタバースの体験設計へ。目的と現場の間に立ち、チームが動ける構造をつくります。</p>
             </article>
-            <article className="future-card next-card" data-reveal>
-              <div className="future-card-top"><span>02 / NEXT</span><span>UNIDENTIFIED</span></div><p className="future-status"><i /> STATUS / PROTOTYPING</p><h3>PROJECT // ???</h3><p>まだ見せられない構想。輪郭だけが、少しずつ見え始めています。</p><div className="classified">SIGNAL ENCRYPTED / CONCEPT IN DEVELOPMENT</div>
-            </article>
+            <ol className="future-principles" aria-label="プロジェクトを前へ進める3つの原則">
+              {futurePrinciples.map((principle, index) => (
+                <li key={principle.en}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div><small>{principle.en}</small><strong>{principle.jp}</strong><p>{principle.description}</p></div>
+                  <i aria-hidden="true" />
+                </li>
+              ))}
+            </ol>
           </div>
           <div className="vision-block" data-reveal>
-            <div className="vision-copy"><span>03 / LONG-TERM VISION</span><h3>学びが、次の創作を<br />生み出す宇宙。</h3><p>Tutorial Worldを入口に、学び、出会い、制作、発表、支援が循環する。初心者がいつか、次の初心者を支える側へ。</p></div>
+            <div className="vision-copy"><span>02 / LONG-TERM VISION</span><h3>学びが、次の創作を<br />生み出す宇宙。</h3><p>Tutorial Worldを入口に、学び、出会い、制作、発表、支援が循環する。初心者がいつか、次の初心者を支える側へ。</p></div>
             <ol className="vision-cycle" aria-label="コミュニティ構想の循環">{["TUTORIAL WORLD", "STUDY EVENT", "COMMUNITY", "CREATION", "EXHIBITION", "SUPPORT"].map((label, index) => <li key={label}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><i aria-hidden="true" /></li>)}</ol>
           </div>
           <div className="contact-block" data-reveal>
