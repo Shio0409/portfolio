@@ -2,20 +2,15 @@
 
 import {
   type CSSProperties,
-  type MouseEvent,
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import {
   careerEvents,
-  categories,
   type CategoryId,
-  processSteps,
-  type Project,
   projects,
 } from "./portfolio-data";
 
@@ -58,20 +53,6 @@ const heroShots = [
 
 type LoaderState = "visible" | "leaving" | "hidden";
 
-function ProjectVisual({ project }: { project: Project }) {
-  return (
-    <div className={`project-visual visual-${project.visual}`} aria-hidden="true">
-      <span className="visual-index">{project.number}</span>
-      <div className="visual-stage">
-        {Array.from({ length: 10 }, (_, index) => (
-          <i key={index} style={{ "--i": index } as CSSProperties} />
-        ))}
-      </div>
-      <span className="visual-caption">MEDIA PLACEHOLDER / 16:10</span>
-    </div>
-  );
-}
-
 function wrapIndex(index: number, length: number) {
   return ((index % length) + length) % length;
 }
@@ -99,27 +80,15 @@ function interpolateOrbitPass(phase: number) {
 export default function PortfolioExperience() {
   const [loaderState, setLoaderState] = useState<LoaderState>("visible");
   const [activeSection, setActiveSection] = useState("top");
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("world");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeSolar, setActiveSolar] = useState(2);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
-  const [careerCharacterY, setCareerCharacterY] = useState(-100);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const openerRef = useRef<HTMLButtonElement | null>(null);
-  const careerRef = useRef<HTMLElement>(null);
+  const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
+  const careerHeadingRef = useRef<HTMLHeadingElement>(null);
+  const careerMapRef = useRef<HTMLDivElement>(null);
+  const futureRef = useRef<HTMLElement>(null);
   const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, moved: false });
-
-  const activeCategoryData = useMemo(
-    () => categories.find((category) => category.id === activeCategory) ?? categories[0],
-    [activeCategory],
-  );
-
-  const visibleProjects = useMemo(
-    () => projects.filter((project) => project.category === activeCategory),
-    [activeCategory],
-  );
 
   const dismissIntro = useCallback(() => {
     setLoaderState((current) => {
@@ -175,38 +144,20 @@ export default function PortfolioExperience() {
   }, []);
 
   useEffect(() => {
-    if (!selectedProject) return;
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
-    document.documentElement.classList.add("dialog-open");
-    return () => document.documentElement.classList.remove("dialog-open");
-  }, [selectedProject]);
-
-  useEffect(() => {
     let frame = 0;
     const updateProgress = () => {
-      const section = careerRef.current;
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      const travel = Math.max(rect.height - window.innerHeight * 0.45, 1);
-      const next = Math.min(1, Math.max(0, (window.innerHeight * 0.58 - rect.top) / travel));
-      const viewportCenter = window.innerHeight * 0.5;
-      const entryEnd = 0.14;
-      const exitStart = 0.86;
-      let characterY = viewportCenter;
-
-      if (next < entryEnd) {
-        const entry = next / entryEnd;
-        const easedEntry = 1 - Math.pow(1 - entry, 3);
-        characterY = -100 + (viewportCenter + 100) * easedEntry;
-      } else if (next > exitStart) {
-        const exit = (next - exitStart) / (1 - exitStart);
-        const easedExit = Math.pow(exit, 3);
-        characterY = viewportCenter + (viewportCenter + 100) * easedExit;
-      }
-
+      const map = careerMapRef.current;
+      const heading = careerHeadingRef.current;
+      const future = futureRef.current;
+      if (!map || !heading || !future) return;
+      const viewportHeight = window.innerHeight;
+      const mapRect = map.getBoundingClientRect();
+      const travel = Math.max(mapRect.height - viewportHeight * 0.5, 1);
+      const next = Math.min(1, Math.max(0, (viewportHeight * 0.5 - mapRect.top) / travel));
+      const headingHasArrived = heading.getBoundingClientRect().top <= viewportHeight * 0.22;
+      const futureHasArrived = future.getBoundingClientRect().top <= viewportHeight * 0.92;
       setCareerProgress(Number(next.toFixed(3)));
-      setCareerCharacterY(Math.round(characterY));
+      setCareerCharacterVisible(headingHasArrived && !futureHasArrived);
     };
     const schedule = () => {
       window.cancelAnimationFrame(frame);
@@ -227,22 +178,9 @@ export default function PortfolioExperience() {
     document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
   };
 
-  const openProject = (project: Project, event: MouseEvent<HTMLButtonElement>) => {
-    openerRef.current = event.currentTarget;
-    setSelectedProject(project);
-  };
-
-  const closeProject = () => dialogRef.current?.close();
-
-  const handleDialogClosed = () => {
-    setSelectedProject(null);
-    window.requestAnimationFrame(() => openerRef.current?.focus());
-  };
-
   const selectSolarPlanet = (index: number) => {
     const next = wrapIndex(index, solarPlanets.length);
     setActiveSolar(next);
-    setActiveCategory(solarPlanets[next].category);
     setDragOffset(0);
   };
 
@@ -265,7 +203,6 @@ export default function PortfolioExperience() {
     const steps = Math.round(dragOffset / 45);
     const next = wrapIndex(activeSolar - steps, solarPlanets.length);
     setActiveSolar(next);
-    setActiveCategory(solarPlanets[next].category);
     setDragOffset(0);
     setIsDragging(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
@@ -300,8 +237,7 @@ export default function PortfolioExperience() {
         </div>
 
         <div
-          className={`career-character career-character-overlay ${careerProgress > 0 && careerProgress < 1 ? "is-visible" : ""}`}
-          style={{ "--career-character-y": `${careerCharacterY}px` } as CSSProperties}
+          className={`career-character career-character-overlay ${careerCharacterVisible ? "is-visible" : ""}`}
           aria-hidden="true"
         ><span /><span /><b>YOU</b></div>
 
@@ -326,7 +262,7 @@ export default function PortfolioExperience() {
           <button className="cosmic-scroll" type="button" onClick={() => scrollToSection("creation")}><span>ENTER ORBIT</span><i aria-hidden="true" /></button>
         </section>
 
-        <section className="creation-section page-section" id="creation" aria-labelledby="creation-title" style={{ "--category-accent": activeCategoryData.accent } as CSSProperties}>
+        <section className="creation-section page-section" id="creation" aria-labelledby="creation-title" style={{ "--category-accent": activePlanet.color } as CSSProperties}>
           <div className="creation-stars" aria-hidden="true">
             {Array.from({ length: 36 }, (_, index) => (
               <i
@@ -417,35 +353,16 @@ export default function PortfolioExperience() {
             </article>
           </div>
 
-          <div className="category-tabs" role="tablist" aria-label="制作カテゴリー" data-reveal>
-            {categories.map((category) => (
-              <button key={category.id} type="button" role="tab" aria-selected={activeCategory === category.id} aria-controls="project-panel" onClick={() => setActiveCategory(category.id)}>
-                <span>{category.number}</span><strong>{category.label}</strong><i aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-          <div className="category-statement" data-reveal><p>{activeCategoryData.number} / {activeCategoryData.label}</p><h3>{activeCategoryData.japanese}</h3><strong>{activeCategoryData.statement}</strong></div>
-          <div className="project-grid" id="project-panel" role="tabpanel" aria-label={`${activeCategoryData.label} projects`}>
-            {visibleProjects.map((project, index) => (
-              <article className="project-card" key={project.id} data-reveal>
-                <ProjectVisual project={project} />
-                <div className="project-card-head"><span>{activeCategoryData.label} / {project.number}</span><span>0{index + 1} — 02</span></div>
-                <h3>{project.title}</h3><p className="project-subtitle">{project.subtitle}</p><p className="project-description">{project.description}</p>
-                <ul className="skill-list" aria-label="使用スキル">{project.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul>
-                <button className="project-open" type="button" onClick={(event) => openProject(project, event)}><span>OPEN PROJECT FILE</span><span aria-hidden="true">↗</span></button>
-              </article>
-            ))}
-          </div>
         </section>
 
-        <section className="career-section page-section" id="career" ref={careerRef} aria-labelledby="career-title">
+        <section className="career-section page-section" id="career" aria-labelledby="career-title">
           <div className="career-stars" aria-hidden="true" />
           <header className="section-header section-header-light" data-reveal><p><span>03</span> / CAREER</p><p>EXPERIENCE LOG</p></header>
           <div className="career-header">
-            <h2 id="career-title" data-reveal>経験は、次の判断を<br /><span>つくっていく。</span></h2>
+            <h2 id="career-title" ref={careerHeadingRef} data-reveal>経験は、次の判断を<br /><span>つくっていく。</span></h2>
             <p data-reveal>点在していた経験がつながり、現在のProject Manager / Directorへ。スクロールとともに、獲得した視点をたどります。</p>
           </div>
-          <div className="career-map" style={{ "--career-progress": careerProgress } as CSSProperties}>
+          <div className="career-map" ref={careerMapRef} style={{ "--career-progress": careerProgress } as CSSProperties}>
             <div className="career-track" aria-hidden="true">
               <i />
             </div>
@@ -462,13 +379,9 @@ export default function PortfolioExperience() {
               ))}
             </ol>
           </div>
-          <div className="career-next" data-reveal>
-            <span>ALL EXPERIENCE CONNECTED</span><p>これまで身につけたものを、<br />次の世界へ。</p>
-            <button type="button" onClick={() => scrollToSection("future")}>CONTINUE TO FUTURE ↓</button>
-          </div>
         </section>
 
-        <section className="future-section page-section" id="future" aria-labelledby="future-title">
+        <section className="future-section page-section" id="future" ref={futureRef} aria-labelledby="future-title">
           <div className="future-nebula" aria-hidden="true" />
           <header className="section-header section-header-light" data-reveal><p><span>04</span> / FUTURE</p><p>THE NEXT TRANSMISSION</p></header>
           <div className="future-heading" data-reveal><p>THE STORY IS STILL IN PROGRESS</p><h2 id="future-title">完成の先を、<br /><span>つくり続ける。</span></h2></div>
@@ -497,18 +410,6 @@ export default function PortfolioExperience() {
         {sections.map((section) => <button key={section.id} type="button" className={activeSection === section.id ? "is-active" : ""} aria-current={activeSection === section.id ? "true" : undefined} aria-label={`${section.number} ${section.label}へ移動`} onClick={() => scrollToSection(section.id)}><span>{section.number} {section.label}</span><i /></button>)}
       </aside>
 
-      {selectedProject && (
-        <dialog className="project-dialog" ref={dialogRef} onClose={handleDialogClosed} onCancel={(event) => { event.preventDefault(); closeProject(); }} aria-labelledby="dialog-title">
-          <div className="dialog-shell">
-            <header className="dialog-header"><span>PROJECT FILE / {selectedProject.number}</span><button type="button" onClick={closeProject} aria-label="作品詳細を閉じる">CLOSE <i>×</i></button></header>
-            <div className="dialog-hero"><div><p>{selectedProject.subtitle}</p><h2 id="dialog-title">{selectedProject.title}</h2><p>{selectedProject.description}</p></div><ProjectVisual project={selectedProject} /></div>
-            <dl className="project-facts"><div><dt>ROLE</dt><dd>{selectedProject.role}</dd></div><div><dt>PERIOD</dt><dd>{selectedProject.period}</dd></div><div><dt>TEAM</dt><dd>{selectedProject.team}</dd></div><div><dt>RESULT</dt><dd>{selectedProject.result}</dd></div></dl>
-            <div className="process-intro"><span>PROCESS / DECISIONS</span><h3>完成品だけではなく、<br />そこに至る判断を。</h3></div>
-            <ol className="process-list">{processSteps.map(([number, title, description]) => <li key={number}><span>{number}</span><h4>{title}</h4><p>{description}</p></li>)}</ol>
-            <footer className="dialog-footer"><span>END OF PROJECT FILE</span><button type="button" onClick={closeProject}>BACK TO CREATIONS ↑</button></footer>
-          </div>
-        </dialog>
-      )}
     </>
   );
 }

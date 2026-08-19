@@ -44,6 +44,7 @@ test("server-renders the portfolio experience", async () => {
   assert.equal((html.match(/is-in-front/g) ?? []).length, 4);
   assert.equal((html.match(/is-outgoing/g) ?? []).length, 2);
   assert.match(html, /career-character career-character-overlay/);
+  assert.doesNotMatch(html, /category-tabs|project-grid|project-dialog|career-next/);
   assert.match(html, /og-solar\.png/);
   assert.match(html, /id="creation"/);
   assert.match(html, /id="career"/);
@@ -73,8 +74,10 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /angle: -30, scale: 0\.2/);
   assert.match(experience, /angle: -288, scale: 7\.2, opacity: 0/);
   assert.match(experience, /fixed-making-statement/);
-  assert.match(experience, /entryEnd = 0\.14/);
-  assert.match(experience, /exitStart = 0\.86/);
+  assert.match(experience, /headingHasArrived.*0\.22/);
+  assert.match(experience, /futureHasArrived.*0\.92/);
+  assert.match(experience, /careerCharacterVisible/);
+  assert.doesNotMatch(experience, /ProjectVisual|selectedProject|careerCharacterY/);
   assert.doesNotMatch(experience, /--career-position/);
   assert.match(page, /robots:/);
   assert.match(layout, /lang="ja"/);
