@@ -66,7 +66,6 @@ const contactChannels = [
 ] as const;
 
 type LoaderState = "visible" | "leaving" | "hidden";
-type MakerPose = { x: number; y: number; scale: number; progress: number; visible: boolean };
 
 function wrapIndex(index: number, length: number) {
   return ((index % length) + length) % length;
@@ -98,11 +97,12 @@ export default function PortfolioExperience() {
   const [activeSolar, setActiveSolar] = useState(2);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [makerPose, setMakerPose] = useState<MakerPose>({ x: 0, y: 0, scale: 1, progress: 0, visible: true });
   const [creationAligned, setCreationAligned] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
   const creationRef = useRef<HTMLElement>(null);
+  const makerRef = useRef<HTMLDivElement>(null);
+  const makerPrefixRef = useRef<HTMLParagraphElement>(null);
   const careerHeadingRef = useRef<HTMLHeadingElement>(null);
   const careerMapRef = useRef<HTMLDivElement>(null);
   const futureRef = useRef<HTMLElement>(null);
@@ -120,7 +120,9 @@ export default function PortfolioExperience() {
     let frame = 0;
     const updateMakerJourney = () => {
       const creation = creationRef.current;
-      if (!creation) return;
+      const maker = makerRef.current;
+      const prefix = makerPrefixRef.current;
+      if (!creation || !maker || !prefix) return;
 
       const rect = creation.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
@@ -146,14 +148,19 @@ export default function PortfolioExperience() {
 
       const dockedScroll = Math.min(0, rect.top);
       const aligned = Math.abs(rect.top) <= 2;
+      const visible = rect.bottom > -80;
+      const x = targetX * progress;
+      const y = targetY * progress + dockedScroll;
+      const scale = 1 + (targetScale - 1) * progress;
+      const prefixOpacity = Math.min(1, Math.max(0, (progress - .42) / .36));
+
+      maker.style.setProperty("--maker-transform", `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`);
+      maker.classList.toggle("is-creation", progress > .02);
+      maker.classList.toggle("is-hidden", !visible);
+      maker.setAttribute("aria-hidden", String(!visible));
+      prefix.style.opacity = String(prefixOpacity);
+      prefix.style.transform = `translateX(${((1 - prefixOpacity) * 35).toFixed(2)}px)`;
       setCreationAligned((current) => current === aligned ? current : aligned);
-      setMakerPose({
-        x: Number((targetX * progress).toFixed(2)),
-        y: Number((targetY * progress + dockedScroll).toFixed(2)),
-        scale: Number((1 + (targetScale - 1) * progress).toFixed(4)),
-        progress: Number(progress.toFixed(4)),
-        visible: rect.bottom > -80,
-      });
     };
     const schedule = () => {
       window.cancelAnimationFrame(frame);
@@ -180,7 +187,7 @@ export default function PortfolioExperience() {
       if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open")) return;
 
       const rect = creation.getBoundingClientRect();
-      const threshold = Math.min(180, window.innerHeight * .16);
+      const threshold = Math.min(260, window.innerHeight * .24);
       const distance = Math.abs(rect.top);
       if (distance <= 2 || distance > threshold || rect.bottom < window.innerHeight * .72) return;
 
@@ -325,7 +332,6 @@ export default function PortfolioExperience() {
 
   const navProgress = Math.max(0, sections.findIndex((section) => section.id === activeSection) / (sections.length - 1));
   const activePlanet = solarPlanets[activeSolar];
-  const makerPrefixOpacity = Math.min(1, Math.max(0, (makerPose.progress - .42) / .36));
 
   return (
     <>
@@ -343,16 +349,15 @@ export default function PortfolioExperience() {
 
       <main id="main-content" aria-hidden={loaderState !== "hidden"}>
         <div
-          className={`fixed-making-statement ${makerPose.visible ? "" : "is-hidden"} ${makerPose.progress > .02 ? "is-creation" : ""}`}
-          style={{
-            "--making-accent": activePlanet.color,
-            "--maker-transform": `translate3d(${makerPose.x}px, ${makerPose.y}px, 0) scale(${makerPose.scale})`,
-          } as CSSProperties}
-          aria-hidden={!makerPose.visible}
+          ref={makerRef}
+          className="fixed-making-statement"
+          style={{ "--making-accent": activePlanet.color } as CSSProperties}
+          aria-hidden="false"
         >
           <p
+            ref={makerPrefixRef}
             className="fixed-making-prefix"
-            style={{ opacity: makerPrefixOpacity, transform: `translateX(${(1 - makerPrefixOpacity) * 35}px)` }}
+            style={{ opacity: 0, transform: "translateX(35px)" }}
           >{activePlanet.prefix}</p>
           <h1 id="hero-title" className="fixed-maker-word">つくる。</h1>
         </div>
