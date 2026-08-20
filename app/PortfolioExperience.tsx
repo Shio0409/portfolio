@@ -5,6 +5,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -101,6 +102,7 @@ export default function PortfolioExperience() {
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
   const creationRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
   const makerRef = useRef<HTMLDivElement>(null);
   const makerPrefixRef = useRef<HTMLParagraphElement>(null);
   const transmissionTitleRef = useRef<HTMLDivElement>(null);
@@ -117,14 +119,15 @@ export default function PortfolioExperience() {
     });
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let frame = 0;
     const updateMakerJourney = () => {
       const creation = creationRef.current;
+      const main = mainRef.current;
       const maker = makerRef.current;
       const prefix = makerPrefixRef.current;
       const titleSlot = transmissionTitleRef.current;
-      if (!creation || !maker || !prefix || !titleSlot) return;
+      if (!creation || !main || !maker || !prefix || !titleSlot) return;
 
       const rect = creation.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
@@ -143,6 +146,12 @@ export default function PortfolioExperience() {
         targetScale = .38;
       }
 
+      maker.style.position = "fixed";
+      maker.style.removeProperty("left");
+      maker.style.removeProperty("top");
+      maker.style.removeProperty("right");
+      maker.style.removeProperty("bottom");
+
       const titleSlotRect = titleSlot.getBoundingClientRect();
       const makerStyle = window.getComputedStyle(maker);
       const makerBaseRight = viewportWidth - Number.parseFloat(makerStyle.right);
@@ -150,17 +159,27 @@ export default function PortfolioExperience() {
       targetX = titleSlotRect.right - makerBaseRight;
       targetY = titleSlotRect.bottom - rect.top - makerBaseBottom;
 
-      const aligned = Math.abs(rect.top) <= 2;
-      const visible = rect.bottom > -80;
-      const x = targetX * progress;
-      const y = targetY * progress;
-      const scale = 1 + (targetScale - 1) * progress;
-      const prefixOpacity = Math.min(1, Math.max(0, (progress - .42) / .36));
+      const docked = rect.top <= 0;
+      const aligned = docked && rect.bottom > 0;
+      if (docked) {
+        const mainRect = main.getBoundingClientRect();
+        maker.style.position = "absolute";
+        maker.style.left = `${(titleSlotRect.right - mainRect.left - maker.offsetWidth).toFixed(2)}px`;
+        maker.style.top = `${(titleSlotRect.bottom - mainRect.top - maker.offsetHeight).toFixed(2)}px`;
+        maker.style.right = "auto";
+        maker.style.bottom = "auto";
+        maker.style.setProperty("--maker-transform", `scale(${targetScale.toFixed(4)})`);
+        maker.dataset.makerState = "docked";
+      } else {
+        const x = targetX * progress;
+        const y = targetY * progress;
+        const scale = 1 + (targetScale - 1) * progress;
+        maker.style.setProperty("--maker-transform", `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`);
+        maker.dataset.makerState = progress > .02 ? "handoff" : "hero";
+      }
 
-      maker.style.setProperty("--maker-transform", `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`);
-      maker.classList.toggle("is-creation", progress > .02);
-      maker.classList.toggle("is-hidden", !visible);
-      maker.setAttribute("aria-hidden", String(!visible));
+      maker.setAttribute("aria-hidden", "false");
+      const prefixOpacity = docked ? 1 : Math.min(1, Math.max(0, (progress - .42) / .36));
       prefix.style.opacity = String(prefixOpacity);
       prefix.style.transform = `translateX(${((1 - prefixOpacity) * 35).toFixed(2)}px)`;
       setCreationAligned((current) => current === aligned ? current : aligned);
@@ -177,7 +196,7 @@ export default function PortfolioExperience() {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, []);
+  }, [activeSolar]);
 
   useEffect(() => {
     let settleTimer = 0;
@@ -390,7 +409,7 @@ export default function PortfolioExperience() {
 
       <a className="skip-link" href="#main-content">本文へスキップ</a>
 
-      <main id="main-content" aria-hidden={loaderState !== "hidden"}>
+      <main id="main-content" ref={mainRef} aria-hidden={loaderState !== "hidden"}>
         <div
           ref={makerRef}
           className="fixed-making-statement"

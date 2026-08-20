@@ -21,6 +21,7 @@
 html { scroll-behavior: smooth; background: var(--black); }
 html.creation-snapping { scroll-behavior: auto; }
 html.intro-open, html.dialog-open { overflow: hidden; }
+#main-content { position:relative; }
 body {
   margin: 0;
   overflow-x: clip;
@@ -485,13 +486,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   will-change: transform, opacity;
   transition: opacity .4s ease, transform .9s cubic-bezier(.16,1,.3,1);
 }
-.fixed-making-statement.is-creation {
-  transform: translate3d(calc(var(--page-gutter) * -.62), calc(-100svh + 286px), 0) scale(.42);
-}
-.fixed-making-statement.is-hidden {
-  opacity:0;
-  transition:opacity .14s ease,transform 0s .15s;
-}
 
 .creation-section {
   height: 100svh;
@@ -698,13 +692,11 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 @media (max-width: 1050px) {
   .solar-transmission { top:66px;width:320px;height:300px;padding:19px 20px 43px; }
   .transmission-title-slot { height:68px; }
-  .fixed-making-statement.is-creation { transform:translate3d(calc(var(--page-gutter) * -.62),calc(-100svh + 228px),0) scale(.5); }
 }
 
 @media (max-width: 760px) {
   .creation-section { height:100svh;min-height:600px;padding:0 20px; }
   .creation-section > .section-header { top:18px;right:20px;left:20px; }
-  .fixed-making-statement.is-creation { transform:translate3d(-22px,calc(-100svh + 208px),0) scale(.46); }
   .creation-stars > i { height:calc(var(--star-size) * 5); }
   .solar-layout { margin:0; }
   .solar-stage { height:100%;min-height:0; }
@@ -727,7 +719,6 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 }
 
 @media (max-height: 680px) and (min-width: 761px) {
-  .fixed-making-statement.is-creation { transform:translate3d(calc(var(--page-gutter) * -.62),calc(-100svh + 236px),0) scale(.38); }
   .solar-transmission { top:70px;height:330px; }
   .transmission-title-slot { height:67px; }
 }
@@ -1039,15 +1030,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .contact-block { margin-top:120px; }
 }
 
-/* Seamless maker journey: one element travels, docks, then leaves with CREATION. */
-.fixed-making-statement,
-.fixed-making-statement.is-creation,
-.fixed-making-statement.is-hidden {
+/* Maker journey: fixed in HERO/HANDOFF, absolute inside the CREATION title slot after docking. */
+.fixed-making-statement {
   transform:var(--maker-transform,translate3d(0,0,0) scale(1));
   transition:opacity .2s linear;
   will-change:transform,opacity;
 }
-.fixed-making-statement.is-hidden { opacity:0; }
+.fixed-making-statement[data-maker-state="docked"] { will-change:auto; }
 .fixed-making-prefix {
   transition:color .45s ease;
   will-change:opacity,transform;

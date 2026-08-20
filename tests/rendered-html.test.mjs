@@ -94,8 +94,13 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /angle: -288, scale: 7\.2, opacity: 0/);
   assert.match(experience, /fixed-making-statement/);
   assert.match(experience, /makerRef/);
+  assert.match(experience, /useLayoutEffect/);
   assert.match(experience, /maker\.style\.setProperty\("--maker-transform"/);
   assert.doesNotMatch(experience, /dockedScroll/);
+  assert.doesNotMatch(experience, /classList\.toggle\("is-hidden"/);
+  assert.match(experience, /maker\.style\.position = "absolute"/);
+  assert.match(experience, /maker\.dataset\.makerState = "docked"/);
+  assert.match(experience, /titleSlotRect\.bottom - mainRect\.top - maker\.offsetHeight/);
   assert.match(experience, /requestAnimationFrame\(step\)/);
   assert.match(experience, /Math\.cos\(Math\.PI \* t\)/);
   assert.match(experience, /window\.innerHeight \* \.6/);
