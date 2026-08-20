@@ -60,7 +60,7 @@ const contactChannels = [
   { label: "YOUTUBE", value: "@sio_manyan", href: "https://www.youtube.com/@sio_manyan", external: true },
   { label: "X", value: "@taque_0409", href: "https://x.com/taque_0409", external: true },
   { label: "EMAIL", value: "solt.0409@gmail.com", href: "mailto:solt.0409@gmail.com", external: false },
-  { label: "DISCORD", value: "sio0409", href: null, external: false },
+  { label: "DISCORD", value: "sio0409", href: "https://discord.com/channels/@me", external: true },
   { label: "BOOTH", value: "sio-shop", href: "https://sio-shop.booth.pm/", external: true },
   { label: "VRCHAT", value: "Sio0409", href: "https://vrchat.com/home/user/usr_8707d220-1408-4a8c-b25c-6a3b14a4c710", external: true },
 ] as const;
@@ -99,6 +99,7 @@ export default function PortfolioExperience() {
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [makerPose, setMakerPose] = useState<MakerPose>({ x: 0, y: 0, scale: 1, progress: 0, visible: true });
+  const [creationAligned, setCreationAligned] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
   const creationRef = useRef<HTMLElement>(null);
@@ -144,6 +145,8 @@ export default function PortfolioExperience() {
       }
 
       const dockedScroll = Math.min(0, rect.top);
+      const aligned = Math.abs(rect.top) <= 2;
+      setCreationAligned((current) => current === aligned ? current : aligned);
       setMakerPose({
         x: Number((targetX * progress).toFixed(2)),
         y: Number((targetY * progress + dockedScroll).toFixed(2)),
@@ -163,6 +166,41 @@ export default function PortfolioExperience() {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+    };
+  }, []);
+
+  useEffect(() => {
+    let settleTimer = 0;
+    let unlockTimer = 0;
+    let snapInProgress = false;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const alignCreation = () => {
+      const creation = creationRef.current;
+      if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open")) return;
+
+      const rect = creation.getBoundingClientRect();
+      const threshold = Math.min(180, window.innerHeight * .16);
+      const distance = Math.abs(rect.top);
+      if (distance <= 2 || distance > threshold || rect.bottom < window.innerHeight * .72) return;
+
+      snapInProgress = true;
+      creation.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+      window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => { snapInProgress = false; }, reducedMotion ? 80 : 760);
+    };
+
+    const scheduleAlignment = () => {
+      if (snapInProgress) return;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(alignCreation, 120);
+    };
+
+    window.addEventListener("scroll", scheduleAlignment, { passive: true });
+    return () => {
+      window.clearTimeout(settleTimer);
+      window.clearTimeout(unlockTimer);
+      window.removeEventListener("scroll", scheduleAlignment);
     };
   }, []);
 
@@ -348,7 +386,7 @@ export default function PortfolioExperience() {
           <button className="cosmic-scroll" type="button" onClick={() => scrollToSection("creation")}><span>ENTER ORBIT</span><i aria-hidden="true" /></button>
         </section>
 
-        <section className="creation-section page-section" id="creation" ref={creationRef} aria-labelledby="creation-title" style={{ "--category-accent": activePlanet.color } as CSSProperties}>
+        <section className={`creation-section page-section ${creationAligned ? "is-aligned" : ""}`} id="creation" ref={creationRef} aria-labelledby="creation-title" style={{ "--category-accent": activePlanet.color } as CSSProperties}>
           <div className="creation-stars" aria-hidden="true">
             {Array.from({ length: 36 }, (_, index) => (
               <i
@@ -364,7 +402,7 @@ export default function PortfolioExperience() {
               />
             ))}
           </div>
-          <header className="section-header section-header-light"><p id="creation-title"><span>02</span> / CREATION</p><p>INTERACTIVE SOLAR FIELD</p></header>
+          <header className="section-header section-header-light"><p id="creation-title"><span>02</span> / CREATION</p><p className="creation-frame-status"><i />{creationAligned ? "FRAME LOCKED" : "SNAP / PROXIMITY"}</p></header>
 
           <div className="solar-layout">
             <div

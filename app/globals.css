@@ -1117,3 +1117,37 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 @media (prefers-reduced-motion:reduce) {
   .career-spacecraft > span,.career-spacecraft::before { animation:none!important; }
 }
+
+/* CREATION viewport magnet / confirms the exact docking frame. */
+.creation-section > .section-header {
+  transition:border-color .35s ease;
+}
+.creation-frame-status {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:rgba(207,220,255,.56);
+  transition:color .3s ease;
+}
+.creation-frame-status > i {
+  width:5px;
+  aspect-ratio:1;
+  border:1px solid currentColor;
+  border-radius:50%;
+  transition:background .3s ease,box-shadow .3s ease,transform .3s ease;
+}
+.creation-section.is-aligned > .section-header {
+  border-bottom-color:rgba(94,233,255,.3);
+}
+.creation-section.is-aligned .creation-frame-status {
+  color:var(--cyan);
+}
+.creation-section.is-aligned .creation-frame-status > i {
+  background:var(--cyan);
+  box-shadow:0 0 12px rgba(94,233,255,.75);
+  transform:scale(1.2);
+}
+
+@media (max-width:760px) {
+  .creation-section .creation-frame-status { display:flex;font-size:5px;letter-spacing:.12em; }
+}

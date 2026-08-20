@@ -33,7 +33,7 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /name="robots" content="noindex, nofollow"/i);
   assert.match(html, />つくる。</);
   assert.doesNotMatch(html, /8つの軌道|8つの「つくる。」|DRAG \/ SWIPE TO ROTATE/);
-  assert.match(html, /INTERACTIVE SOLAR FIELD/);
+  assert.match(html, /SNAP \/ PROXIMITY/);
   assert.match(html, /MERCURY/);
   assert.match(html, /NEPTUNE/);
   assert.match(html, /\/planets\/earth\.jpg/);
@@ -54,6 +54,7 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /youtube\.com\/@sio_manyan/);
   assert.match(html, /x\.com\/taque_0409/);
   assert.match(html, /sio-shop\.booth\.pm/);
+  assert.match(html, /discord\.com\/channels\/@me/);
   assert.match(html, /usr_8707d220-1408-4a8c-b25c-6a3b14a4c710/);
   assert.match(html, />Sio0409</);
   assert.match(html, /群馬県立前橋高等学校/);
@@ -94,6 +95,8 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /fixed-making-statement/);
   assert.match(experience, /makerPose/);
   assert.match(experience, /dockedScroll/);
+  assert.match(experience, /scrollIntoView\(\{ behavior: reducedMotion/);
+  assert.match(experience, /FRAME LOCKED/);
   assert.match(experience, /transmission-title-slot/);
   assert.match(experience, /career-spacecraft/);
   assert.match(styles, /career-spacecraft\.png/);
