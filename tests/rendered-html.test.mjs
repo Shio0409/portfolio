@@ -34,17 +34,16 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, />つくる。</);
   assert.doesNotMatch(html, /8つの軌道|8つの「つくる。」|DRAG \/ SWIPE TO ROTATE/);
   assert.match(html, /SNAP \/ PROXIMITY/);
-  assert.match(html, /MERCURY/);
-  assert.match(html, /NEPTUNE/);
+  assert.match(html, /水星を選択/);
+  assert.match(html, /海王星を選択/);
   assert.match(html, /\/planets\/earth\.jpg/);
-  assert.match(html, /\/planets\/saturn\.jpg/);
-  assert.match(html, /OBSERVATION IMAGERY \/ NASA・JPL・GSFC/);
-  assert.match(html, /FRONT \/ ALIGN/);
+  assert.match(html, /\/planets\/jupiter\.jpg/);
+  assert.match(html, /PLANETARY TEXTURE MAPS \/ NASA・JPL・CALTECH/);
+  assert.match(html, /SYSTEM \/ SYNC/);
+  assert.match(html, /TARGET \/ (?:<!-- -->)?03/);
   assert.match(html, /目的・導線・感情の変化/);
-  assert.equal((html.match(/class="solar-planet/g) ?? []).length, 8);
-  assert.equal((html.match(/is-behind-sun/g) ?? []).length, 4);
-  assert.equal((html.match(/is-in-front/g) ?? []).length, 4);
-  assert.equal((html.match(/is-outgoing/g) ?? []).length, 2);
+  assert.match(html, /class="solar-webgl/);
+  assert.doesNotMatch(html, /class="solar-planet|is-behind-sun|is-in-front|is-outgoing/);
   assert.match(html, /class="career-spacecraft/);
   assert.match(html, /MS-01 \/ ON COURSE/);
   assert.doesNotMatch(html, /category-tabs|project-grid|project-dialog|career-next/);
@@ -73,25 +72,41 @@ test("server-renders the portfolio experience", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
-test("keeps editable content separate from the UI", async () => {
-  const [data, experience, styles, page, layout, packageJson] = await Promise.all([
+test("keeps content and rendering systems modular", async () => {
+  const [data, experience, styles, solarStyles, solarRenderer, solarData, mediaData, mediaFrame, page, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/portfolio-data.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/PortfolioExperience.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/solar-system.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/SolarSystemWebGL.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/solar-system-data.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/portfolio-media.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/MediaFrame.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(data, /export const categories/);
-  assert.match(data, /export const projects/);
   assert.match(data, /export const careerEvents/);
+  assert.match(data, /export type PortfolioMedia/);
   assert.match(experience, /PortfolioExperience/);
   assert.match(experience, /prefers-reduced-motion/);
-  assert.match(experience, /centerX: 0, centerY: 50, radiusX: 86, radiusY: 40/);
-  assert.match(experience, /angle: 52\.8, scale: 4\.8/);
-  assert.match(experience, /angle: -30, scale: 0\.2/);
-  assert.match(experience, /angle: -288, scale: 7\.2, opacity: 0/);
+  assert.match(experience, /<SolarSystemWebGL activeIndex=\{activeSolar\} dragOffset=\{dragOffset\}/);
+  assert.doesNotMatch(experience, /orbitGeometry|interpolateOrbitPass|className="solar-planet/);
+  assert.match(solarRenderer, /await import\("three"\)/);
+  assert.match(solarRenderer, /new THREE\.SphereGeometry/);
+  assert.match(solarRenderer, /new THREE\.PointLight/);
+  assert.match(solarRenderer, /node\.globe\.rotation\.y/);
+  assert.match(solarRenderer, /IntersectionObserver/);
+  assert.match(solarRenderer, /webglcontextlost/);
+  assert.match(solarRenderer, /prefers-reduced-motion/);
+  assert.match(solarRenderer, /texture\.dispose\(\)/);
+  assert.match(solarRenderer, /renderer\?\.dispose\(\)/);
+  assert.equal((solarData.match(/\/planets\/webgl\//g) ?? []).length, 8);
+  assert.match(solarData, /spin:-/);
+  assert.match(solarData, /ring:/);
+  assert.match(solarStyles, /solar-webgl-fallback/);
+  assert.match(solarStyles, /webgl-target-reticle/);
   assert.match(experience, /fixed-making-statement/);
   assert.match(experience, /makerRef/);
   assert.match(experience, /useLayoutEffect/);
@@ -120,7 +135,15 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /careerCharacterVisible/);
   assert.doesNotMatch(experience, /ProjectVisual|selectedProject|careerCharacterY/);
   assert.doesNotMatch(experience, /--career-position/);
+  assert.match(mediaData, /export const heroShots/);
+  assert.match(mediaData, /currentVector: null/);
+  assert.match(mediaData, /longTermVision: null/);
+  assert.match(mediaData, /"education-lab": null/);
+  assert.match(mediaFrame, /<video/);
+  assert.match(mediaFrame, /kind="captions"/);
+  assert.match(mediaFrame, /<img/);
   assert.match(page, /robots:/);
   assert.match(layout, /lang="ja"/);
+  assert.match(packageJson, /"three"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });

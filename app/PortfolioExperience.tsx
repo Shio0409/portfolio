@@ -11,8 +11,11 @@ import {
 } from "react";
 import {
   careerEvents,
-  type CategoryId,
 } from "./portfolio-data";
+import MediaFrame from "./MediaFrame";
+import { heroShots, portfolioMedia } from "./portfolio-media";
+import SolarSystemWebGL from "./SolarSystemWebGL";
+import { solarPlanets } from "./solar-system-data";
 
 const sections = [
   { id: "top", number: "01", label: "TOP" },
@@ -21,75 +24,25 @@ const sections = [
   { id: "future", number: "04", label: "FUTURE" },
 ] as const;
 
-const solarPlanets = [
-  { name: "MERCURY", jp: "水星", prefix: "問いを", description: "曖昧な課題を分解し、チームが動き出せる問いへ変換する。", color: "#a9a5a1", glow: "#cbc6bd", size: 42, image: "/planets/mercury.jpg", category: "system" as CategoryId },
-  { name: "VENUS", jp: "金星", prefix: "関係を", description: "立場の違いを翻訳し、人と人が協働できる接点を設計する。", color: "#efb56f", glow: "#ff8d47", size: 58, image: "/planets/venus.jpg", category: "community" as CategoryId },
-  { name: "EARTH", jp: "地球", prefix: "体験を", description: "目的・導線・感情の変化をつなぎ、記憶に残る体験を組み立てる。", color: "#5ee9ff", glow: "#3156ff", size: 62, image: "/planets/earth.jpg", category: "world" as CategoryId },
-  { name: "MARS", jp: "火星", prefix: "遊びを", description: "触れたくなる反応とルールを重ね、直感的な楽しさを実装する。", color: "#f17655", glow: "#d83c2e", size: 54, image: "/planets/mars.jpg", category: "play" as CategoryId },
-  { name: "JUPITER", jp: "木星", prefix: "世界を", description: "空間・物語・行動を束ね、訪れる理由のある世界を立ち上げる。", color: "#e4b48c", glow: "#c16e55", size: 112, image: "/planets/jupiter.jpg", category: "world" as CategoryId },
-  { name: "SATURN", jp: "土星", prefix: "仕組みを", description: "複雑な条件を整理し、アイデアが継続して届く構造へ変える。", color: "#e8d394", glow: "#d49b55", size: 100, image: "/planets/saturn.jpg", category: "system" as CategoryId },
-  { name: "URANUS", jp: "天王星", prefix: "文化を", description: "参加と制作が循環し、関わる人が育てていける場をつくる。", color: "#8ce7e8", glow: "#4eb8ca", size: 82, image: "/planets/uranus.webp", category: "community" as CategoryId },
-  { name: "NEPTUNE", jp: "海王星", prefix: "未来を", description: "まだ名前のない可能性を試作し、次の現実へつながる入口をつくる。", color: "#6a79ff", glow: "#3447e2", size: 78, image: "/planets/neptune.webp", category: "play" as CategoryId },
-] as const;
-
-const orbitGeometry = { centerX: 0, centerY: 50, radiusX: 86, radiusY: 40 } as const;
-
-const orbitPass = [
-  { angle: 52.8, scale: 4.8, opacity: 1, blur: 0, z: 1180, label: 1 },
-  { angle: 0, scale: 0.62, opacity: 0.76, blur: 0.8, z: 630, label: 0.42 },
-  { angle: -30, scale: 0.2, opacity: 0.42, blur: 2.4, z: 320, label: 0.12 },
-  { angle: -58, scale: 0.09, opacity: 0.22, blur: 4.2, z: 160, label: 0 },
-  { angle: -88, scale: 0.04, opacity: 0.08, blur: 7, z: 80, label: 0 },
-  { angle: -130, scale: 0.02, opacity: 0, blur: 9, z: 30, label: 0 },
-  { angle: -240, scale: 9, opacity: 0, blur: 1.8, z: 1700, label: 0 },
-  { angle: -288, scale: 7.2, opacity: 0, blur: 0.2, z: 1500, label: 0 },
-] as const;
-
-const heroShots = [
-  { id: "01", title: "VIRTUAL WORLD", image: "/planets/earth.jpg", accent: "#5ee9ff" },
-  { id: "02", title: "SHARED EXPERIENCE", image: "/planets/jupiter.jpg", accent: "#e4b48c" },
-  { id: "03", title: "NEW REALITY", image: "/planets/neptune.webp", accent: "#6a79ff" },
-] as const;
-
 const futurePrinciples = [
   { jp: "観察する", en: "UNDERSTAND", description: "ユーザー、事業、技術の現実を見つめ、曖昧な課題の輪郭を捉える。" },
   { jp: "つなぐ", en: "ALIGN", description: "立場の違いを翻訳し、人・優先順位・判断をひとつの方向へそろえる。" },
   { jp: "届ける", en: "DELIVER", description: "構想を体験へ変え、反応から学びながら継続的に価値を更新する。" },
 ] as const;
 
-const contactChannels = [
+const contactChannels: ReadonlyArray<{ label:string; value:string; href?:string; external:boolean }> = [
   { label: "YOUTUBE", value: "@sio_manyan", href: "https://www.youtube.com/@sio_manyan", external: true },
   { label: "X", value: "@taque_0409", href: "https://x.com/taque_0409", external: true },
   { label: "EMAIL", value: "solt.0409@gmail.com", href: "mailto:solt.0409@gmail.com", external: false },
   { label: "DISCORD", value: "sio0409", href: "https://discord.com/channels/@me", external: true },
   { label: "BOOTH", value: "sio-shop", href: "https://sio-shop.booth.pm/", external: true },
   { label: "VRCHAT", value: "Sio0409", href: "https://vrchat.com/home/user/usr_8707d220-1408-4a8c-b25c-6a3b14a4c710", external: true },
-] as const;
+];
 
 type LoaderState = "visible" | "leaving" | "hidden";
 
 function wrapIndex(index: number, length: number) {
   return ((index % length) + length) % length;
-}
-
-function interpolateOrbitPass(phase: number) {
-  const normalized = wrapIndex(phase, orbitPass.length);
-  const fromIndex = Math.floor(normalized);
-  const toIndex = (fromIndex + 1) % orbitPass.length;
-  const progress = normalized - fromIndex;
-  const from = orbitPass[fromIndex];
-  const to = orbitPass[toIndex];
-  const mix = (start: number, end: number) => start + (end - start) * progress;
-  const toAngle = toIndex === 0 ? to.angle - 360 : to.angle;
-  const angle = mix(from.angle, toAngle) * Math.PI / 180;
-
-  return {
-    x: orbitGeometry.centerX + Math.cos(angle) * orbitGeometry.radiusX,
-    y: orbitGeometry.centerY + Math.sin(angle) * orbitGeometry.radiusY,
-    scale: mix(from.scale, to.scale),
-    opacity: mix(from.opacity, to.opacity), blur: mix(from.blur, to.blur),
-    z: mix(from.z, to.z), label: mix(from.label, to.label),
-  };
 }
 
 export default function PortfolioExperience() {
@@ -440,9 +393,9 @@ export default function PortfolioExperience() {
               <figure
                 className={`cosmic-shot shot-${index + 1}`}
                 key={shot.id}
-                style={{ "--shot-image": `url(${shot.image})`, "--shot-accent": shot.accent } as CSSProperties}
+                style={{ "--shot-accent": shot.accent } as CSSProperties}
               >
-                <div className="shot-fallback" aria-hidden="true"><span className="shot-planet" /><span className="shot-horizon" /></div>
+                <MediaFrame asset={shot.media} className="cosmic-shot-media" eager={index === 0} />
                 <figcaption><span>{shot.id} / 03</span><span>{shot.title}</span></figcaption>
               </figure>
             ))}
@@ -493,43 +446,8 @@ export default function PortfolioExperience() {
                 if (event.key === "ArrowLeft" || event.key === "ArrowUp") selectSolarPlanet(activeSolar - 1);
               }}
             >
-              <div className="solar-orbits" aria-hidden="true">
-                {solarPlanets.map((planet, index) => (
-                  <i key={planet.name} style={{ "--orbit-index": index } as CSSProperties} />
-                ))}
-              </div>
-              <div className="solar-axis" aria-hidden="true"><i /><span>CREATION AXIS</span></div>
-              <div className="solar-sun" aria-hidden="true"><i /><span>SUN / 00</span></div>
-              {solarPlanets.map((planet, index) => {
-                const phase = wrapIndex(index - activeSolar + dragOffset / 45, solarPlanets.length);
-                const pass = interpolateOrbitPass(phase);
-                const isActive = index === activeSolar && Math.abs(dragOffset) < 14;
-                const isBehindSun = pass.z < 560;
-                const isOutgoing = phase > 5;
-                return (
-                  <button
-                    className={`solar-planet planet-${index + 1} ${isBehindSun ? "is-behind-sun" : "is-in-front"} ${isOutgoing ? "is-outgoing" : ""} ${isActive ? "is-active" : ""}`}
-                    type="button"
-                    key={planet.name}
-                    aria-label={`${planet.jp}・${planet.prefix}つくる。を表示`}
-                    aria-pressed={isActive}
-                    onClick={() => { if (!dragRef.current.moved) selectSolarPlanet(index); }}
-                    style={{
-                      "--planet-x": `${pass.x}%`, "--planet-y": `${pass.y}%`, "--planet-scale": pass.scale,
-                      "--planet-label-scale": Math.min(1, 1 / pass.scale), "--planet-label-opacity": pass.label,
-                      "--planet-opacity": pass.opacity, "--planet-color": planet.color,
-                      "--planet-glow": planet.glow, "--planet-z": Math.round(pass.z),
-                      "--planet-size": `${planet.size}px`, "--planet-blur": `${pass.blur}px`,
-                      "--planet-image": `url(${planet.image})`, "--planet-rotation": `${48 + index * 6}s`,
-                    } as CSSProperties}
-                  >
-                    <i className="planet-surface" aria-hidden="true" />
-                    <span>{planet.jp} / {planet.name}</span><b>{planet.prefix}</b>
-                  </button>
-                );
-              })}
-              <div className="solar-camera" aria-hidden="true"><i /><span>FRONT / ALIGN</span></div>
-              <p className="solar-source-credit">OBSERVATION IMAGERY / NASA・JPL・GSFC</p>
+              <SolarSystemWebGL activeIndex={activeSolar} dragOffset={dragOffset} />
+              <p className="solar-source-credit">PLANETARY TEXTURE MAPS / NASA・JPL・CALTECH</p>
             </div>
 
             <article className="solar-transmission" key={activeSolar} aria-live="polite">
@@ -568,10 +486,13 @@ export default function PortfolioExperience() {
               <i />
             </div>
             <ol className="career-events">
-              {careerEvents.map((event, index) => (
-                <li key={`${event.title}-${index}`} data-reveal>
+              {careerEvents.map((event, index) => {
+                const eventMedia = event.media ?? portfolioMedia.career[event.id];
+                return (
+                <li key={event.id} data-reveal>
                   <article>
                     <div className="career-event-meta"><span>{event.year}</span><span>{event.type}</span></div>
+                    {eventMedia && <MediaFrame asset={eventMedia} className="career-event-media" />}
                     <h3>{event.title}</h3>
                     {event.role && <p className="career-role">{event.role}</p>}
                     <p className="career-description">{event.description}</p>
@@ -584,7 +505,8 @@ export default function PortfolioExperience() {
                   </article>
                   <span className="career-node" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 </li>
-              ))}
+                );
+              })}
             </ol>
           </div>
         </section>
@@ -594,8 +516,9 @@ export default function PortfolioExperience() {
           <header className="section-header section-header-light" data-reveal><p><span>04</span> / FUTURE</p><p>THE NEXT TRANSMISSION</p></header>
           <div className="future-heading" data-reveal><p>NEXT ORBIT / 2026—</p><h2 id="future-title">完成の先を、<br /><span>つくり続ける。</span></h2></div>
           <div className="future-system" data-reveal>
-            <article className="future-vector">
+            <article className={`future-vector ${portfolioMedia.future.currentVector ? "has-media" : ""}`}>
               <div className="future-card-top"><span>01 / CURRENT VECTOR</span><span>METAVERSE</span></div>
+              {portfolioMedia.future.currentVector && <MediaFrame asset={portfolioMedia.future.currentVector} className="future-vector-media" />}
               <p className="future-status"><i /> ROLE / PROJECT MANAGER・DIRECTOR</p>
               <h3>人と判断をつなぎ、<br />体験を前へ進める。</h3>
               <p>心理学、教育、教室運営、事業づくりで培った視点を、メタバースの体験設計へ。目的と現場の間に立ち、チームが動ける構造をつくります。</p>
@@ -611,7 +534,7 @@ export default function PortfolioExperience() {
             </ol>
           </div>
           <div className="vision-block" data-reveal>
-            <div className="vision-copy"><span>02 / LONG-TERM VISION</span><h3>学びが、次の創作を<br />生み出す宇宙。</h3><p>Tutorial Worldを入口に、学び、出会い、制作、発表、支援が循環する。初心者がいつか、次の初心者を支える側へ。</p></div>
+            <div className={`vision-copy ${portfolioMedia.future.longTermVision ? "has-media" : ""}`}><span>02 / LONG-TERM VISION</span>{portfolioMedia.future.longTermVision && <MediaFrame asset={portfolioMedia.future.longTermVision} className="vision-media" />}<h3>学びが、次の創作を<br />生み出す宇宙。</h3><p>Tutorial Worldを入口に、学び、出会い、制作、発表、支援が循環する。初心者がいつか、次の初心者を支える側へ。</p></div>
             <ol className="vision-cycle" aria-label="コミュニティ構想の循環">{["TUTORIAL WORLD", "STUDY EVENT", "COMMUNITY", "CREATION", "EXHIBITION", "SUPPORT"].map((label, index) => <li key={label}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong><i aria-hidden="true" /></li>)}</ol>
           </div>
           <div className="contact-block" data-reveal>

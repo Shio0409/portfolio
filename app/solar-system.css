@@ -1,0 +1,15 @@
+.solar-webgl{position:absolute;z-index:1;inset:0;overflow:hidden;background:radial-gradient(ellipse at 70% 88%,rgba(54,76,180,.09),transparent 42%)}
+.solar-webgl canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s ease;pointer-events:none}
+.solar-webgl.is-ready canvas{opacity:1}
+.solar-webgl-fallback{position:absolute;inset:0;display:grid;place-items:center;opacity:1;transition:opacity .6s ease;background:radial-gradient(circle at 2% 49%,rgba(255,176,89,.18),transparent 34%)}
+.solar-webgl.is-ready .solar-webgl-fallback{opacity:0}
+.solar-webgl-fallback::before{position:absolute;top:50%;left:-24vw;width:52vw;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 66% 42%,#fff8ce 0 2%,#ffcf68 11%,#e16e29 38%,#451209 70%,transparent 71%);box-shadow:0 0 120px rgba(255,145,53,.34);content:"";transform:translateY(-50%)}
+.solar-webgl-fallback>i{position:absolute;top:71%;left:67%;width:clamp(190px,27vw,430px);aspect-ratio:1;border-radius:50%;background:#02040d var(--fallback-planet) center/cover no-repeat;box-shadow:inset -38px -18px 62px rgba(0,0,0,.65),0 0 78px color-mix(in srgb,var(--fallback-glow),transparent 48%);transform:translate(-50%,-50%)}
+.webgl-target-reticle{position:absolute;z-index:3;top:70.8%;left:66.4%;width:clamp(214px,29vw,448px);aspect-ratio:1;border:1px solid rgba(218,230,255,.2);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+.webgl-target-reticle::before,.webgl-target-reticle::after{position:absolute;background:rgba(218,230,255,.2);content:""}.webgl-target-reticle::before{top:50%;left:-22px;width:calc(100% + 44px);height:1px}.webgl-target-reticle::after{top:-22px;left:50%;width:1px;height:calc(100% + 44px)}
+.webgl-target-reticle>i{position:absolute;inset:10%;border:1px dashed rgba(94,233,255,.18);border-radius:50%;animation:webgl-scan 18s linear infinite}
+.webgl-target-reticle>span{position:absolute;right:0;bottom:-22px;color:rgba(225,233,255,.58);font:700 6px/1 var(--display-font);letter-spacing:.17em}
+.webgl-render-state{position:absolute;z-index:3;right:var(--page-gutter);bottom:13px;margin:0;color:rgba(225,233,255,.48);font:700 5px/1 var(--display-font);letter-spacing:.17em}
+@keyframes webgl-scan{to{transform:rotate(360deg)}}
+@media(max-width:760px){.webgl-target-reticle{top:76%;left:61%;width:50vw}.solar-webgl-fallback::before{left:-62vw;width:120vw}.solar-webgl-fallback>i{top:76%;left:61%;width:48vw}.webgl-render-state{right:20px}}
+@media(prefers-reduced-motion:reduce){.webgl-target-reticle>i{animation:none}}
