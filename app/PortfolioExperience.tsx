@@ -146,11 +146,10 @@ export default function PortfolioExperience() {
         targetScale = .38;
       }
 
-      const dockedScroll = Math.min(0, rect.top);
       const aligned = Math.abs(rect.top) <= 2;
       const visible = rect.bottom > -80;
       const x = targetX * progress;
-      const y = targetY * progress + dockedScroll;
+      const y = targetY * progress;
       const scale = 1 + (targetScale - 1) * progress;
       const prefixOpacity = Math.min(1, Math.max(0, (progress - .42) / .36));
 
@@ -178,23 +177,52 @@ export default function PortfolioExperience() {
 
   useEffect(() => {
     let settleTimer = 0;
-    let unlockTimer = 0;
+    let snapFrame = 0;
     let snapInProgress = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const stopSnap = () => {
+      window.cancelAnimationFrame(snapFrame);
+      snapFrame = 0;
+      snapInProgress = false;
+    };
+
+    const animateCreationSnap = (targetY: number) => {
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      if (reducedMotion) {
+        window.scrollTo(0, targetY);
+        snapInProgress = false;
+        return;
+      }
+
+      const duration = Math.min(1180, Math.max(880, 820 + Math.abs(distance) * 1.15));
+      const startedAt = window.performance.now();
+      const step = (now: number) => {
+        const t = Math.min(1, (now - startedAt) / duration);
+        const eased = t * t * t * (t * (t * 6 - 15) + 10);
+        window.scrollTo(0, startY + distance * eased);
+        if (t < 1) {
+          snapFrame = window.requestAnimationFrame(step);
+        } else {
+          snapFrame = 0;
+          snapInProgress = false;
+        }
+      };
+      snapFrame = window.requestAnimationFrame(step);
+    };
 
     const alignCreation = () => {
       const creation = creationRef.current;
       if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open")) return;
 
       const rect = creation.getBoundingClientRect();
-      const threshold = Math.min(260, window.innerHeight * .24);
+      const threshold = Math.min(380, window.innerHeight * .34);
       const distance = Math.abs(rect.top);
       if (distance <= 2 || distance > threshold || rect.bottom < window.innerHeight * .72) return;
 
       snapInProgress = true;
-      creation.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-      window.clearTimeout(unlockTimer);
-      unlockTimer = window.setTimeout(() => { snapInProgress = false; }, reducedMotion ? 80 : 760);
+      animateCreationSnap(window.scrollY + rect.top);
     };
 
     const scheduleAlignment = () => {
@@ -203,11 +231,19 @@ export default function PortfolioExperience() {
       settleTimer = window.setTimeout(alignCreation, 120);
     };
 
+    const interruptSnap = () => {
+      if (snapInProgress) stopSnap();
+    };
+
     window.addEventListener("scroll", scheduleAlignment, { passive: true });
+    window.addEventListener("wheel", interruptSnap, { passive: true });
+    window.addEventListener("touchstart", interruptSnap, { passive: true });
     return () => {
       window.clearTimeout(settleTimer);
-      window.clearTimeout(unlockTimer);
+      stopSnap();
       window.removeEventListener("scroll", scheduleAlignment);
+      window.removeEventListener("wheel", interruptSnap);
+      window.removeEventListener("touchstart", interruptSnap);
     };
   }, []);
 

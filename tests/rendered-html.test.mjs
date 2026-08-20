@@ -95,9 +95,10 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /fixed-making-statement/);
   assert.match(experience, /makerRef/);
   assert.match(experience, /maker\.style\.setProperty\("--maker-transform"/);
-  assert.match(experience, /dockedScroll/);
-  assert.match(experience, /scrollIntoView\(\{ behavior: reducedMotion/);
-  assert.match(experience, /window\.innerHeight \* \.24/);
+  assert.doesNotMatch(experience, /dockedScroll/);
+  assert.match(experience, /requestAnimationFrame\(step\)/);
+  assert.match(experience, /t \* t \* t \* \(t \* \(t \* 6 - 15\) \+ 10\)/);
+  assert.match(experience, /window\.innerHeight \* \.34/);
   assert.match(experience, /FRAME LOCKED/);
   assert.match(experience, /transmission-title-slot/);
   assert.match(experience, /career-spacecraft/);
