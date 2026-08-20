@@ -99,8 +99,11 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /requestAnimationFrame\(step\)/);
   assert.match(experience, /Math\.cos\(Math\.PI \* t\)/);
   assert.match(experience, /window\.innerHeight \* \.6/);
+  assert.match(experience, /classList\.add\("creation-snapping"\)/);
+  assert.match(experience, /setTimeout\(alignCreation, 220\)/);
   assert.match(experience, /transmissionTitleRef/);
   assert.match(experience, /titleSlotRect\.right - makerBaseRight/);
+  assert.match(styles, /html\.creation-snapping \{ scroll-behavior: auto; \}/);
   assert.match(experience, /FRAME LOCKED/);
   assert.match(experience, /transmission-title-slot/);
   assert.match(experience, /career-spacecraft/);

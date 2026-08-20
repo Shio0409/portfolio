@@ -19,6 +19,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--black); }
+html.creation-snapping { scroll-behavior: auto; }
 html.intro-open, html.dialog-open { overflow: hidden; }
 body {
   margin: 0;

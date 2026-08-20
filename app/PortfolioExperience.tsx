@@ -189,6 +189,7 @@ export default function PortfolioExperience() {
       window.cancelAnimationFrame(snapFrame);
       snapFrame = 0;
       snapInProgress = false;
+      document.documentElement.classList.remove("creation-snapping");
     };
 
     const animateCreationSnap = (targetY: number) => {
@@ -200,6 +201,7 @@ export default function PortfolioExperience() {
         return;
       }
 
+      document.documentElement.classList.add("creation-snapping");
       const duration = Math.min(1680, Math.max(1240, 1080 + Math.abs(distance) * 1.35));
       const startedAt = window.performance.now();
       const step = (now: number) => {
@@ -211,6 +213,7 @@ export default function PortfolioExperience() {
         } else {
           snapFrame = 0;
           snapInProgress = false;
+          document.documentElement.classList.remove("creation-snapping");
         }
       };
       snapFrame = window.requestAnimationFrame(step);
@@ -232,7 +235,7 @@ export default function PortfolioExperience() {
     const scheduleAlignment = () => {
       if (snapInProgress) return;
       window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(alignCreation, 120);
+      settleTimer = window.setTimeout(alignCreation, 220);
     };
 
     const interruptSnap = () => {
