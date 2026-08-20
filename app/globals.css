@@ -116,7 +116,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 .reel-reticle::before,.reel-reticle::after{position:absolute;background:rgba(246,248,255,.28);content:""}.reel-reticle::before{top:50%;left:-20px;width:132px;height:1px}.reel-reticle::after{top:-20px;left:50%;width:1px;height:132px}.reel-reticle span{position:absolute;top:calc(100% + 17px);left:50%;color:rgba(246,248,255,.56);font:700 7px/1 var(--display-font);letter-spacing:.18em;transform:translateX(-50%)}
 .reel-progress{position:absolute;z-index:5;right:clamp(22px,3.2vw,54px);bottom:31px;display:flex;width:180px;gap:5px}.reel-progress i{height:2px;flex:1;background:rgba(255,255,255,.2);overflow:hidden}.reel-progress i::after{display:block;width:100%;height:100%;background:var(--white);content:"";transform-origin:left;animation:reel-line 18s linear infinite}.reel-progress i:nth-child(2)::after{animation-delay:6s}.reel-progress i:nth-child(3)::after{animation-delay:12s}@keyframes reel-line{0%{transform:scaleX(0)}29%{transform:scaleX(1)}33%,100%{transform:scaleX(0)}}
 .cosmic-intro{position:absolute;z-index:6;top:22%;left:clamp(22px,3.2vw,54px);max-width:390px}.cosmic-index{display:flex;margin:0 0 35px;align-items:center;gap:11px;font:700 9px/1 var(--display-font);letter-spacing:.17em}.cosmic-index span{color:#8da4ff}.cosmic-manifesto{margin:0;color:rgba(246,248,255,.74);font-size:clamp(12px,1vw,15px);line-height:2;letter-spacing:.07em}
-.fixed-making-statement{position:fixed;z-index:220;right:clamp(18px,3.2vw,54px);bottom:clamp(25px,4.2vh,54px);display:flex;align-items:flex-end;gap:clamp(2px,.45vw,8px);pointer-events:none;transition:opacity .4s ease,transform .6s cubic-bezier(.22,1,.36,1);white-space:nowrap}.fixed-making-statement.is-hidden{opacity:0;transform:translateY(25px)}
+.fixed-making-statement{position:fixed;z-index:2300;right:clamp(18px,3.2vw,54px);bottom:clamp(25px,4.2vh,54px);display:flex;align-items:flex-end;gap:clamp(2px,.45vw,8px);pointer-events:none;transition:opacity .4s ease,transform .6s cubic-bezier(.22,1,.36,1);white-space:nowrap}.fixed-making-statement.is-hidden{opacity:0;transform:translateY(25px)}
 .fixed-maker-word{position:relative;margin:0;color:#fff;font:700 clamp(72px,12.5vw,196px)/.72 var(--display-font);letter-spacing:-.1em;text-shadow:0 8px 60px rgba(2,4,18,.5)}
 .fixed-making-prefix{position:relative;margin:0 0 .02em;color:var(--making-accent,rgba(245,247,255,.96));font:500 clamp(35px,6.2vw,92px)/.8 var(--display-font);letter-spacing:-.08em;opacity:0;transform:translateX(35px);transition:color .5s ease,opacity .45s ease,transform .7s cubic-bezier(.22,1,.36,1);text-shadow:0 6px 45px rgba(0,0,0,.72)}.fixed-making-prefix.is-visible{opacity:1;transform:none}
 .cosmic-scroll{position:absolute;z-index:7;bottom:clamp(28px,4vh,48px);left:clamp(22px,3.2vw,54px);display:flex;align-items:center;gap:16px;color:rgba(246,248,255,.75);font:700 8px/1 var(--display-font);letter-spacing:.18em}.cosmic-scroll i{display:block;width:42px;height:1px;background:currentColor}.cosmic-scroll:hover i{animation:line-pulse 1s ease infinite}@keyframes line-pulse{50%{transform:scaleX(.45);transform-origin:right}}
@@ -1111,7 +1111,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 @keyframes spacecraft-thrust { 50% { height:68px;opacity:.34; } }
 
 @media (max-width:760px) {
-  .career-spacecraft { width:clamp(70px,20vw,86px); }
+  .career-spacecraft { left:calc(var(--page-gutter) + 22px);width:clamp(70px,20vw,86px); }
   .career-spacecraft b { top:calc(100% + 6px);font-size:5px; }
 }
 

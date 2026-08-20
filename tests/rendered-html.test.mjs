@@ -108,6 +108,8 @@ test("keeps editable content separate from the UI", async () => {
   assert.match(experience, /transmission-title-slot/);
   assert.match(experience, /career-spacecraft/);
   assert.match(styles, /career-spacecraft\.png/);
+  assert.match(styles, /fixed-making-statement\{position:fixed;z-index:2300/);
+  assert.match(styles, /left:calc\(var\(--page-gutter\) \+ 22px\);width:clamp\(70px,20vw,86px\)/);
   assert.match(experience, /headingHasArrived.*0\.22/);
   assert.match(experience, /futureHasArrived.*0\.92/);
   assert.match(experience, /careerCharacterVisible/);
