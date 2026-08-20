@@ -103,6 +103,7 @@ export default function PortfolioExperience() {
   const creationRef = useRef<HTMLElement>(null);
   const makerRef = useRef<HTMLDivElement>(null);
   const makerPrefixRef = useRef<HTMLParagraphElement>(null);
+  const transmissionTitleRef = useRef<HTMLDivElement>(null);
   const careerHeadingRef = useRef<HTMLHeadingElement>(null);
   const careerMapRef = useRef<HTMLDivElement>(null);
   const futureRef = useRef<HTMLElement>(null);
@@ -122,29 +123,32 @@ export default function PortfolioExperience() {
       const creation = creationRef.current;
       const maker = makerRef.current;
       const prefix = makerPrefixRef.current;
-      if (!creation || !maker || !prefix) return;
+      const titleSlot = transmissionTitleRef.current;
+      if (!creation || !maker || !prefix || !titleSlot) return;
 
       const rect = creation.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       const progress = Math.min(1, Math.max(0, (viewportHeight - rect.top) / viewportHeight));
-      const gutter = Math.min(74, Math.max(24, viewportWidth * .042));
-      let targetX = gutter * -.62;
-      let targetY = -viewportHeight + 286;
+      let targetX = 0;
+      let targetY = 0;
       let targetScale = .42;
 
       if (viewportWidth <= 1050) {
-        targetY = -viewportHeight + 228;
         targetScale = .5;
       }
       if (viewportWidth <= 760) {
-        targetX = -22;
-        targetY = -viewportHeight + 208;
         targetScale = .46;
       } else if (viewportHeight <= 680) {
-        targetY = -viewportHeight + 236;
         targetScale = .38;
       }
+
+      const titleSlotRect = titleSlot.getBoundingClientRect();
+      const makerStyle = window.getComputedStyle(maker);
+      const makerBaseRight = viewportWidth - Number.parseFloat(makerStyle.right);
+      const makerBaseBottom = viewportHeight - Number.parseFloat(makerStyle.bottom);
+      targetX = titleSlotRect.right - makerBaseRight;
+      targetY = titleSlotRect.bottom - rect.top - makerBaseBottom;
 
       const aligned = Math.abs(rect.top) <= 2;
       const visible = rect.bottom > -80;
@@ -196,11 +200,11 @@ export default function PortfolioExperience() {
         return;
       }
 
-      const duration = Math.min(1180, Math.max(880, 820 + Math.abs(distance) * 1.15));
+      const duration = Math.min(1680, Math.max(1240, 1080 + Math.abs(distance) * 1.35));
       const startedAt = window.performance.now();
       const step = (now: number) => {
         const t = Math.min(1, (now - startedAt) / duration);
-        const eased = t * t * t * (t * (t * 6 - 15) + 10);
+        const eased = .5 - Math.cos(Math.PI * t) / 2;
         window.scrollTo(0, startY + distance * eased);
         if (t < 1) {
           snapFrame = window.requestAnimationFrame(step);
@@ -217,9 +221,9 @@ export default function PortfolioExperience() {
       if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open")) return;
 
       const rect = creation.getBoundingClientRect();
-      const threshold = Math.min(380, window.innerHeight * .34);
+      const threshold = window.innerHeight * .6;
       const distance = Math.abs(rect.top);
-      if (distance <= 2 || distance > threshold || rect.bottom < window.innerHeight * .72) return;
+      if (distance <= 2 || distance > threshold) return;
 
       snapInProgress = true;
       animateCreationSnap(window.scrollY + rect.top);
@@ -509,7 +513,7 @@ export default function PortfolioExperience() {
             <article className="solar-transmission" key={activeSolar} aria-live="polite">
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
-              <div className="transmission-title-slot" aria-hidden="true" />
+              <div ref={transmissionTitleRef} className="transmission-title-slot" aria-hidden="true" />
               <p>{activePlanet.description}</p>
               <div className="planet-selector" aria-label="惑星を直接選択">
                 {solarPlanets.map((planet, index) => (
