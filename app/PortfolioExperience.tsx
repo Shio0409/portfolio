@@ -76,11 +76,10 @@ export default function PortfolioExperience() {
     let frame = 0;
     const updateMakerJourney = () => {
       const creation = creationRef.current;
-      const main = mainRef.current;
       const maker = makerRef.current;
       const prefix = makerPrefixRef.current;
       const titleSlot = transmissionTitleRef.current;
-      if (!creation || !main || !maker || !prefix || !titleSlot) return;
+      if (!creation || !maker || !prefix || !titleSlot) return;
 
       const rect = creation.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
@@ -109,19 +108,15 @@ export default function PortfolioExperience() {
       const makerStyle = window.getComputedStyle(maker);
       const makerBaseRight = viewportWidth - Number.parseFloat(makerStyle.right);
       const makerBaseBottom = viewportHeight - Number.parseFloat(makerStyle.bottom);
+      const fitScale = (titleSlotRect.width - 2) / Math.max(maker.offsetWidth, 1);
+      targetScale = Math.max(.27, Math.min(targetScale, fitScale));
       targetX = titleSlotRect.right - makerBaseRight;
-      targetY = titleSlotRect.bottom - rect.top - makerBaseBottom;
+      targetY = titleSlotRect.bottom - makerBaseBottom;
 
       const docked = rect.top <= 0;
       const aligned = docked && rect.bottom > 0;
       if (docked) {
-        const mainRect = main.getBoundingClientRect();
-        maker.style.position = "absolute";
-        maker.style.left = `${(titleSlotRect.right - mainRect.left - maker.offsetWidth).toFixed(2)}px`;
-        maker.style.top = `${(titleSlotRect.bottom - mainRect.top - maker.offsetHeight).toFixed(2)}px`;
-        maker.style.right = "auto";
-        maker.style.bottom = "auto";
-        maker.style.setProperty("--maker-transform", `scale(${targetScale.toFixed(4)})`);
+        maker.style.setProperty("--maker-transform", `translate3d(${targetX.toFixed(2)}px, ${targetY.toFixed(2)}px, 0) scale(${targetScale.toFixed(4)})`);
         maker.dataset.makerState = "docked";
       } else {
         const x = targetX * progress;
@@ -280,8 +275,10 @@ export default function PortfolioExperience() {
       if (!map || !heading || !future) return;
       const viewportHeight = window.innerHeight;
       const mapRect = map.getBoundingClientRect();
-      const travel = Math.max(mapRect.height - viewportHeight * 0.5, 1);
-      const next = Math.min(1, Math.max(0, (viewportHeight * 0.5 - mapRect.top) / travel));
+      const trackTop = mapRect.top + 22;
+      const trackLength = Math.max(mapRect.height - 44, 1);
+      const spacecraftCenter = viewportHeight * 0.5;
+      const next = Math.min(1, Math.max(0, (spacecraftCenter - trackTop) / trackLength));
       const headingHasArrived = heading.getBoundingClientRect().top <= viewportHeight * 0.22;
       const futureHasArrived = future.getBoundingClientRect().top <= viewportHeight * 0.92;
       setCareerProgress(Number(next.toFixed(3)));
@@ -347,6 +344,7 @@ export default function PortfolioExperience() {
 
   const navProgress = Math.max(0, sections.findIndex((section) => section.id === activeSection) / (sections.length - 1));
   const activePlanet = solarPlanets[activeSolar];
+  const activeCreationMedia = portfolioMedia.creation[activePlanet.name];
 
   return (
     <>
@@ -380,7 +378,7 @@ export default function PortfolioExperience() {
         <div
           className={`career-spacecraft ${careerCharacterVisible ? "is-visible" : ""}`}
           aria-hidden="true"
-        ><span /><b>MS-01 / ON COURSE</b></div>
+        ><span /></div>
 
         <section className="cosmic-hero page-section" id="top" aria-labelledby="hero-title">
           <div className="cosmic-sky" aria-hidden="true"><i /><i /><i /><i /></div>
@@ -417,7 +415,7 @@ export default function PortfolioExperience() {
                   "--star-size": `${1 + (index % 4) * 0.55}px`,
                   "--star-color": index % 11 === 0 ? "#ff9bdd" : index % 7 === 0 ? "#83b8ff" : "#ffffff",
                   "--star-delay": `${-(index % 9) * 0.47}s`,
-                  "--star-duration": `${2.3 + (index % 6) * 0.48}s`,
+                  "--star-duration": `${5.8 + (index % 6) * 1.1}s`,
                 } as CSSProperties}
               />
             ))}
@@ -454,7 +452,17 @@ export default function PortfolioExperience() {
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
               <div ref={transmissionTitleRef} className="transmission-title-slot" aria-hidden="true" />
-              <p>{activePlanet.description}</p>
+              <div className="transmission-detail">
+                <p>{activePlanet.description}</p>
+                {activeCreationMedia ? (
+                  <MediaFrame asset={activeCreationMedia} className="creation-media-frame" />
+                ) : (
+                  <div className="creation-media-placeholder" role="img" aria-label={`${activePlanet.jp}の作品写真枠`}>
+                    <span>VISUAL ARCHIVE</span>
+                    <strong>{activePlanet.name} / IMAGE SLOT</strong>
+                  </div>
+                )}
+              </div>
               <div className="planet-selector" aria-label="惑星を直接選択">
                 {solarPlanets.map((planet, index) => (
                   <button

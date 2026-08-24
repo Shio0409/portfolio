@@ -46,7 +46,9 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /class="solar-webgl/);
   assert.doesNotMatch(html, /class="solar-planet|is-behind-sun|is-in-front|is-outgoing/);
   assert.match(html, /class="career-spacecraft/);
-  assert.match(html, /MS-01 \/ ON COURSE/);
+  assert.doesNotMatch(html, /MS-01 \/ ON COURSE/);
+  assert.match(html, /VISUAL ARCHIVE/);
+  assert.match(html, /EARTH(?:<!-- -->)? \/ IMAGE SLOT/);
   assert.doesNotMatch(html, /category-tabs|project-grid|project-dialog|career-next/);
   assert.match(html, /og-masataka-shiozawa\.png/);
   assert.match(html, /MASATAKA SHIOZAWA/);
@@ -127,9 +129,10 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(experience, /maker\.style\.setProperty\("--maker-transform"/);
   assert.doesNotMatch(experience, /dockedScroll/);
   assert.doesNotMatch(experience, /classList\.toggle\("is-hidden"/);
-  assert.match(experience, /maker\.style\.position = "absolute"/);
+  assert.doesNotMatch(experience, /maker\.style\.position = "absolute"/);
   assert.match(experience, /maker\.dataset\.makerState = "docked"/);
-  assert.match(experience, /titleSlotRect\.bottom - mainRect\.top - maker\.offsetHeight/);
+  assert.match(experience, /titleSlotRect\.bottom - makerBaseBottom/);
+  assert.match(experience, /fitScale/);
   assert.match(experience, /requestAnimationFrame\(step\)/);
   assert.match(experience, /Math\.cos\(Math\.PI \* t\)/);
   assert.match(experience, /window\.innerHeight \* \.6/);
@@ -147,9 +150,12 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(experience, /headingHasArrived.*0\.22/);
   assert.match(experience, /futureHasArrived.*0\.92/);
   assert.match(experience, /careerCharacterVisible/);
+  assert.match(experience, /spacecraftCenter - trackTop/);
   assert.doesNotMatch(experience, /ProjectVisual|selectedProject|careerCharacterY/);
   assert.doesNotMatch(experience, /--career-position/);
   assert.match(mediaData, /export const heroShots/);
+  assert.match(mediaData, /creation:/);
+  assert.equal((mediaData.match(/(?:MERCURY|VENUS|EARTH|MARS|JUPITER|SATURN|URANUS|NEPTUNE): null/g) ?? []).length, 8);
   assert.match(mediaData, /currentVector: null/);
   assert.match(mediaData, /longTermVision: null/);
   assert.match(mediaData, /"education-lab": null/);

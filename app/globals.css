@@ -109,7 +109,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 .cosmic-shot figcaption{position:absolute;z-index:3;top:24px;right:clamp(22px,3.2vw,54px);display:flex;gap:24px;color:rgba(246,248,255,.72);font:650 8px/1 var(--display-font);letter-spacing:.17em}
 .reel-reticle{position:absolute;z-index:4;top:49%;left:50%;width:94px;aspect-ratio:1;border:1px solid rgba(246,248,255,.25);border-radius:50%;transform:translate(-50%,-50%)}
 .reel-reticle::before,.reel-reticle::after{position:absolute;background:rgba(246,248,255,.28);content:""}.reel-reticle::before{top:50%;left:-20px;width:132px;height:1px}.reel-reticle::after{top:-20px;left:50%;width:1px;height:132px}.reel-reticle span{position:absolute;top:calc(100% + 17px);left:50%;color:rgba(246,248,255,.56);font:700 7px/1 var(--display-font);letter-spacing:.18em;transform:translateX(-50%)}
-.reel-progress{position:absolute;z-index:5;right:clamp(22px,3.2vw,54px);bottom:31px;display:flex;width:180px;gap:5px}.reel-progress i{height:2px;flex:1;background:rgba(255,255,255,.2);overflow:hidden}.reel-progress i::after{display:block;width:100%;height:100%;background:var(--white);content:"";transform-origin:left;animation:reel-line 18s linear infinite}.reel-progress i:nth-child(2)::after{animation-delay:6s}.reel-progress i:nth-child(3)::after{animation-delay:12s}@keyframes reel-line{0%{transform:scaleX(0)}29%{transform:scaleX(1)}33%,100%{transform:scaleX(0)}}
+.reel-progress{position:absolute;z-index:5;top:54px;right:clamp(22px,3.2vw,54px);display:flex;width:180px;gap:5px}.reel-progress i{height:2px;flex:1;background:rgba(255,255,255,.2);overflow:hidden}.reel-progress i::after{display:block;width:100%;height:100%;background:var(--white);content:"";transform-origin:left;animation:reel-line 18s linear infinite}.reel-progress i:nth-child(2)::after{animation-delay:6s}.reel-progress i:nth-child(3)::after{animation-delay:12s}@keyframes reel-line{0%{transform:scaleX(0)}29%{transform:scaleX(1)}33%,100%{transform:scaleX(0)}}
 .cosmic-intro{position:absolute;z-index:6;top:22%;left:clamp(22px,3.2vw,54px);max-width:390px}.cosmic-index{display:flex;margin:0 0 35px;align-items:center;gap:11px;font:700 9px/1 var(--display-font);letter-spacing:.17em}.cosmic-index span{color:#8da4ff}.cosmic-manifesto{margin:0;color:rgba(246,248,255,.74);font-size:clamp(12px,1vw,15px);line-height:2;letter-spacing:.07em}
 .fixed-making-statement{position:fixed;z-index:2300;right:clamp(18px,3.2vw,54px);bottom:clamp(25px,4.2vh,54px);display:flex;align-items:flex-end;gap:clamp(2px,.45vw,8px);pointer-events:none;transition:opacity .4s ease,transform .6s cubic-bezier(.22,1,.36,1);white-space:nowrap}
 .fixed-maker-word{position:relative;margin:0;color:#fff;font:700 clamp(72px,12.5vw,196px)/.72 var(--display-font);letter-spacing:-.1em;text-shadow:0 8px 60px rgba(2,4,18,.5)}
@@ -141,7 +141,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 @media (max-width: 760px) {
   :root{--page-gutter:20px}
   .loader-topline span:last-child,.loader-bottom span:last-child{display:none}.loader-bottom{grid-template-columns:1fr;gap:15px}.loader-progress{width:100%}.loader-word{font-size:17vw}.loader-orbit{width:72vw}
-  .cosmic-header{height:62px;grid-template-columns:1fr auto}.cosmic-header p:first-of-type{display:none}.cosmic-header p:last-child{font-size:6px}.cosmic-reel{inset:62px 0 0}.cosmic-intro{top:19%;max-width:275px}.cosmic-manifesto{font-size:11px}.fixed-making-statement{right:16px;bottom:28px;gap:0}.fixed-maker-word{font-size:clamp(72px,25vw,116px)}.fixed-making-prefix{font-size:clamp(38px,13vw,62px)}.cosmic-scroll{bottom:130px}.cosmic-shot figcaption{top:17px;right:18px;font-size:6px}.reel-progress{right:18px;bottom:18px;width:100px}.reel-reticle{width:70px}.reel-reticle::before{left:-15px;width:98px}.reel-reticle::after{top:-15px;height:98px}
+  .cosmic-header{height:62px;grid-template-columns:1fr auto}.cosmic-header p:first-of-type{display:none}.cosmic-header p:last-child{font-size:6px}.cosmic-reel{inset:62px 0 0}.cosmic-intro{top:19%;max-width:275px}.cosmic-manifesto{font-size:11px}.fixed-making-statement{right:16px;bottom:28px;gap:0}.fixed-maker-word{font-size:clamp(72px,25vw,116px)}.fixed-making-prefix{font-size:clamp(38px,13vw,62px)}.cosmic-scroll{bottom:130px}.cosmic-shot figcaption{top:17px;right:18px;font-size:6px}.reel-progress{top:42px;right:18px;width:100px}.reel-reticle{width:70px}.reel-reticle::before{left:-15px;width:98px}.reel-reticle::after{top:-15px;height:98px}
   .section-header p:last-child{display:none}.side-navigation{right:7px}.side-navigation button>span{display:none}
   .future-section{padding-top:92px}.future-heading{display:block;margin-top:68px}.future-heading>p{margin-bottom:31px}.future-heading h2{font-size:clamp(49px,15vw,78px)}.vision-copy{padding:42px 24px 55px}.vision-copy h3{margin-top:70px;font-size:45px}.vision-cycle{grid-template-columns:1fr}.vision-cycle li,.vision-cycle li:nth-child(odd),.vision-cycle li:nth-last-child(-n+2){min-height:106px;border-right:0;border-bottom:1px solid var(--line)}.vision-cycle li:last-child{border-bottom:0}.contact-block h3{font-size:18vw}.contact-note{margin:44px 0}.contact-links{grid-template-columns:1fr}.contact-link,.contact-link:nth-child(3n){min-height:92px;border-right:0}.contact-link>strong{font-size:14px}.site-footer{align-items:flex-start;gap:18px;flex-direction:column}
 }
@@ -303,30 +303,18 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 .creation-stars > i {
   z-index: 2;
   width: max(1px,var(--star-size));
-  height: calc(var(--star-size) * 6.2);
-  aspect-ratio: auto;
-  border-radius: 999px;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
   background: var(--star-color,#fff);
-  box-shadow: 0 0 calc(var(--star-size) * 5) color-mix(in srgb,var(--star-color,#fff),transparent 18%);
-  opacity: .16;
+  box-shadow: 0 0 calc(var(--star-size) * 3.6) color-mix(in srgb,var(--star-color,#fff),transparent 38%);
+  opacity: .3;
   animation: star-twinkle-rich var(--star-duration) ease-in-out var(--star-delay) infinite;
 }
-.creation-stars > i::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--star-size) * 4.1);
-  height: max(1px,calc(var(--star-size) * .52));
-  border-radius: 999px;
-  background: inherit;
-  box-shadow: inherit;
-  content: "";
-  transform: translate(-50%,-50%);
-}
 @keyframes star-twinkle-rich {
-  0%,100% { opacity:.12;filter:brightness(.72);transform:scale(.72); }
-  47% { opacity:1;filter:brightness(1.45);transform:scale(1.18); }
-  66% { opacity:.28;filter:brightness(.9);transform:scale(.86); }
+  0%,100% { opacity:.18;filter:brightness(.82);transform:scale(.9); }
+  48% { opacity:.62;filter:brightness(1.16);transform:scale(1.06); }
+  72% { opacity:.3;filter:brightness(.94);transform:scale(.96); }
 }
 
 .solar-layout {
@@ -405,7 +393,14 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 .solar-transmission .transmission-meta { padding-bottom:13px;font-size:7px; }
 .solar-transmission .transmission-signal { margin:15px 0 0; }
 .transmission-title-slot { height:clamp(74px,10.5vh,97px);flex:none; }
-.solar-transmission > p:not(.transmission-signal) { max-width:360px;font-size:10px;line-height:1.78; }
+.transmission-detail { display:grid;margin-top:2px;align-items:stretch;gap:14px;grid-template-columns:minmax(0,1fr) 116px; }
+.transmission-detail > p { margin:0;font-size:10px;line-height:1.78; }
+.creation-media-frame,.creation-media-placeholder { width:116px;height:78px;border:1px solid color-mix(in srgb,var(--category-accent),transparent 72%); }
+.creation-media-placeholder { position:relative;display:flex;padding:11px;overflow:hidden;justify-content:flex-end;flex-direction:column;background:linear-gradient(145deg,color-mix(in srgb,var(--category-accent),transparent 91%),rgba(2,5,15,.76)); }
+.creation-media-placeholder::before { position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 47%,rgba(245,247,255,.08) 48% 48.7%,transparent 50%),repeating-linear-gradient(90deg,transparent 0 17px,rgba(245,247,255,.035) 18px);content:""; }
+.creation-media-placeholder span,.creation-media-placeholder strong { position:relative;z-index:1; }
+.creation-media-placeholder span { margin-bottom:6px;color:rgba(229,237,255,.45);font:700 5px/1 var(--display-font);letter-spacing:.13em; }
+.creation-media-placeholder strong { color:rgba(239,244,255,.72);font:700 6px/1.35 var(--display-font);letter-spacing:.1em; }
 .planet-selector { display:grid;margin:14px 0 0;gap:5px;grid-template-columns:repeat(8,1fr); }
 .planet-selector button { position:relative;display:grid;height:20px;place-items:center;border:1px solid rgba(245,247,255,.11);color:rgba(245,247,255,.38);overflow:hidden;transition:color .25s ease,border-color .25s ease,background .25s ease,transform .25s ease; }
 .planet-selector button::before { position:absolute;right:0;bottom:0;left:0;height:1px;background:var(--category-accent);content:"";transform:scaleX(0);transform-origin:left;transition:transform .35s ease; }
@@ -421,23 +416,27 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 .solar-transmission .orbit-controls button:active { transform:scale(.96); }
 
 @media (max-width: 1050px) {
-  .solar-transmission { top:66px;width:320px;height:300px;padding:19px 20px 43px; }
+  .solar-transmission { top:66px;width:320px;height:340px;padding:19px 20px 43px; }
   .transmission-title-slot { height:68px; }
+  .transmission-detail { gap:10px;grid-template-columns:minmax(0,1fr) 100px; }
+  .creation-media-frame,.creation-media-placeholder { width:100px;height:70px; }
 }
 
 @media (max-width: 760px) {
   .creation-section { height:100svh;min-height:600px;padding:0 20px; }
   .creation-section > .section-header { top:18px;right:20px;left:20px; }
-  .creation-stars > i { height:calc(var(--star-size) * 5); }
   .solar-layout { margin:0; }
   .solar-stage { height:100%;min-height:0; }
   .solar-stage::after { background:radial-gradient(circle 34vw at var(--pointer-x) var(--pointer-y),color-mix(in srgb,var(--category-accent),transparent 86%),transparent 75%); }
   .solar-source-credit { bottom:10px;left:16px;font-size:5px; }
-  .solar-transmission { top:66px;right:20px;width:calc(100% - 40px);height:clamp(300px,42svh,335px);min-height:0;margin:0;padding:17px 18px 44px; }
+  .solar-transmission { top:66px;right:20px;width:calc(100% - 40px);height:clamp(332px,45svh,365px);min-height:0;margin:0;padding:17px 18px 44px; }
   .solar-transmission .transmission-meta { padding-bottom:10px;font-size:6px; }
   .solar-transmission .transmission-signal { margin-top:10px;font-size:6px; }
   .transmission-title-slot { height:64px; }
-  .solar-transmission > p:not(.transmission-signal) { font-size:9.5px;line-height:1.65; }
+  .transmission-detail { gap:9px;grid-template-columns:minmax(0,1fr) 92px; }
+  .transmission-detail > p { font-size:9.5px;line-height:1.65; }
+  .creation-media-frame,.creation-media-placeholder { width:92px;height:66px; }
+  .creation-media-placeholder { padding:8px; }
   .planet-selector { margin-top:9px;gap:3px; }
   .planet-selector button { height:17px; }
   .solar-transmission .transmission-unlock { padding-top:9px; }
@@ -656,13 +655,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .contact-block { margin-top:120px; }
 }
 
-/* Maker journey: fixed in HERO/HANDOFF, absolute inside the CREATION title slot after docking. */
+/* Maker journey: one fixed coordinate system keeps HERO → CREATION perfectly continuous. */
 .fixed-making-statement {
   transform:var(--maker-transform,translate3d(0,0,0) scale(1));
   transition:opacity .2s linear;
   will-change:transform,opacity;
 }
-.fixed-making-statement[data-maker-state="docked"] { will-change:auto; }
+.fixed-making-statement[data-maker-state="docked"] { will-change:transform,opacity; }
 .fixed-making-prefix {
   transition:color .45s ease;
   will-change:opacity,transform;
@@ -708,26 +707,11 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   transform:translateX(-50%);
   animation:spacecraft-thrust 1.6s ease-in-out infinite;
 }
-.career-spacecraft b {
-  position:absolute;
-  top:calc(100% + 10px);
-  left:50%;
-  width:max-content;
-  padding:6px 8px;
-  border:1px solid rgba(94,233,255,.2);
-  color:rgba(222,234,255,.76);
-  background:rgba(3,7,20,.72);
-  font:700 6px/1 var(--display-font);
-  letter-spacing:.16em;
-  transform:translateX(-50%);
-  backdrop-filter:blur(8px);
-}
 @keyframes spacecraft-drift { 50% { transform:translateY(4px);filter:brightness(1.04); } }
 @keyframes spacecraft-thrust { 50% { height:68px;opacity:.34; } }
 
 @media (max-width:760px) {
   .career-spacecraft { left:calc(var(--page-gutter) + 22px);width:clamp(70px,20vw,86px); }
-  .career-spacecraft b { top:calc(100% + 6px);font-size:5px; }
 }
 
 @media (prefers-reduced-motion:reduce) {

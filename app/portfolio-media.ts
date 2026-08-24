@@ -6,11 +6,23 @@ export const heroShots = [
   { id:"03", title:"NEW REALITY", accent:"#6a79ff", media:{ kind:"image", src:"/planets/neptune.webp", alt:"青く輝く海王星" } },
 ] satisfies ReadonlyArray<{ id:string; title:string; accent:string; media:PortfolioMedia }>;
 
-// Add an image or video here later; null slots stay out of the rendered layout.
+// Add an image or video here later. Creation keeps a designed placeholder visible
+// so every planet already has a clear, replacement-safe visual slot.
 export const portfolioMedia: {
+  creation: Record<string, PortfolioMedia | null>;
   career: Record<string, PortfolioMedia | null>;
   future: Record<string, PortfolioMedia | null>;
 } = {
+  creation: {
+    MERCURY: null,
+    VENUS: null,
+    EARTH: null,
+    MARS: null,
+    JUPITER: null,
+    SATURN: null,
+    URANUS: null,
+    NEPTUNE: null,
+  },
   career: {
     "maebashi-high": null,
     "kanagawa-university": null,
