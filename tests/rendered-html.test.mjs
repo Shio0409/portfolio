@@ -40,6 +40,7 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /\/planets\/jupiter\.jpg/);
   assert.match(html, /PLANETARY TEXTURE MAPS \/ NASA・JPL・CALTECH/);
   assert.match(html, /SYSTEM \/ SYNC/);
+  assert.match(html, /SOLAR CORE \/ 00/);
   assert.match(html, /TARGET \/ (?:<!-- -->)?03/);
   assert.match(html, /目的・導線・感情の変化/);
   assert.match(html, /class="solar-webgl/);
@@ -96,6 +97,15 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(solarRenderer, /await import\("three"\)/);
   assert.match(solarRenderer, /new THREE\.SphereGeometry/);
   assert.match(solarRenderer, /new THREE\.PointLight/);
+  assert.match(solarRenderer, /const solarCenter = \{ x:-6\.6, y:\.05, z:-1\.1 \}/);
+  assert.match(solarRenderer, /solarCenter\.x \+ Math\.cos\(theta\) \* orbitProfile\.radiusX \* scale/);
+  assert.doesNotMatch(solarRenderer, /point\.clone\(\)\.multiplyScalar\(scale\)/);
+  assert.match(solarRenderer, /makeHologramMaterial/);
+  assert.match(solarRenderer, /sunGridMaterial/);
+  assert.match(solarRenderer, /colorWrite:false/);
+  assert.match(solarRenderer, /atmosphereSphere/);
+  assert.match(solarRenderer, /color:0xffffff/);
+  assert.match(solarRenderer, /vRadius \* 91\.0/);
   assert.match(solarRenderer, /node\.globe\.rotation\.y/);
   assert.match(solarRenderer, /IntersectionObserver/);
   assert.match(solarRenderer, /webglcontextlost/);
@@ -103,10 +113,14 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(solarRenderer, /texture\.dispose\(\)/);
   assert.match(solarRenderer, /renderer\?\.dispose\(\)/);
   assert.equal((solarData.match(/\/planets\/webgl\//g) ?? []).length, 8);
+  assert.equal((solarData.match(/roughness:/g) ?? []).length, 9);
+  assert.equal((solarData.match(/atmosphere:/g) ?? []).length, 9);
   assert.match(solarData, /spin:-/);
   assert.match(solarData, /ring:/);
   assert.match(solarStyles, /solar-webgl-fallback/);
   assert.match(solarStyles, /webgl-target-reticle/);
+  assert.match(solarStyles, /webgl-core-label/);
+  assert.match(solarStyles, /fallback-sun-scan/);
   assert.match(experience, /fixed-making-statement/);
   assert.match(experience, /makerRef/);
   assert.match(experience, /useLayoutEffect/);
