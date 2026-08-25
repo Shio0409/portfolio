@@ -181,9 +181,11 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(styles, /solar-transmission:hover \.transmission-details[^}]*opacity:1[^}]*visibility:visible/);
   assert.match(styles, /solar-transmission \.orbit-controls \{[^}]*opacity:0[^}]*visibility:hidden[^}]*pointer-events:none/);
   assert.match(styles, /solar-transmission:hover \.orbit-controls[^}]*opacity:1[^}]*visibility:visible[^}]*pointer-events:auto/);
-  assert.match(styles, /height: 221px/);
+  assert.match(styles, /height: 197px/);
   assert.match(styles, /padding: 18px 20px 14px/);
-  assert.match(styles, /height:213px;min-height:0;margin:0;padding:16px 18px 15px/);
+  assert.match(styles, /width:clamp\(650px,55vw,780px\);height:320px/);
+  assert.match(styles, /height:186px;min-height:0;margin:0;padding:16px 18px 15px/);
+  assert.match(styles, /solar-transmission:hover,.solar-transmission\.is-expanded \{ height:310px; \}/);
   assert.doesNotMatch(styles, /transmission-close|is-hover-dismissed/);
   assert.match(styles, /solar-transmission\.is-expanded \.transmission-copy-column \{ position:static;width:100%/);
   assert.match(styles, /fixed-making-statement\[data-maker-state="docked"\],[\s\S]*data-maker-state="after"\][^}]*opacity:0/);
