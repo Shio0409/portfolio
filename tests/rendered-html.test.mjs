@@ -154,6 +154,9 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(experience, /transmission-copy-column/);
   assert.match(experience, /creation-making-title/);
   assert.match(experience, /creationDetailsOpen/);
+  assert.match(experience, /matchMedia\("\(hover:hover\) and \(pointer:fine\)"\)\.matches\) setCreationDetailsOpen\(false\)/);
+  assert.match(experience, /endY - startY > 90\) setCreationDetailsOpen\(false\)/);
+  assert.doesNotMatch(experience, /creationHoverDismissed|transmission-close|CLOSE/);
   assert.match(experience, /transmission-summary/);
   assert.match(experience, /transmission-details/);
   assert.doesNotMatch(experience, /transmission-title-slot|transmission-expanded-copy/);
@@ -173,6 +176,10 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(styles, /transmission-copy-column \{[^}]*position:absolute[^}]*right:0[^}]*width:var\(--transmission-copy-width\)/);
   assert.match(styles, /creation-making-title \{[^}]*grid-template-columns:4em auto/);
   assert.match(styles, /transmission-details > span \{[^}]*width:100%[^}]*text-align:left/);
+  assert.match(styles, /transmission-media-pane \{[^}]*opacity:0[^}]*visibility:hidden[^}]*transition:/);
+  assert.match(styles, /transmission-details \{[^}]*opacity:0[^}]*visibility:hidden[^}]*transition:/);
+  assert.match(styles, /solar-transmission:hover \.transmission-details[^}]*opacity:1[^}]*visibility:visible/);
+  assert.doesNotMatch(styles, /transmission-close|is-hover-dismissed/);
   assert.match(styles, /solar-transmission\.is-expanded \.transmission-copy-column \{ position:static;width:100%/);
   assert.match(styles, /fixed-making-statement\[data-maker-state="docked"\],[\s\S]*data-maker-state="after"\][^}]*opacity:0/);
   assert.doesNotMatch(experience, /key=\{activeSolar\}/);

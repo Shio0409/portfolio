@@ -53,7 +53,6 @@ export default function PortfolioExperience() {
   const [isDragging, setIsDragging] = useState(false);
   const [creationAligned, setCreationAligned] = useState(false);
   const [creationDetailsOpen, setCreationDetailsOpen] = useState(false);
-  const [creationHoverDismissed, setCreationHoverDismissed] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
   const creationRef = useRef<HTMLElement>(null);
@@ -65,6 +64,7 @@ export default function PortfolioExperience() {
   const careerMapRef = useRef<HTMLDivElement>(null);
   const futureRef = useRef<HTMLElement>(null);
   const dragRef = useRef({ pointerId: -1, startX: 0, startY: 0, moved: false });
+  const transmissionTouchRef = useRef<number | null>(null);
 
   const dismissIntro = useCallback(() => {
     setLoaderState((current) => {
@@ -241,7 +241,6 @@ export default function PortfolioExperience() {
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setCreationDetailsOpen(false);
-        setCreationHoverDismissed(true);
       }
     };
     window.addEventListener("keydown", closeOnEscape);
@@ -460,7 +459,20 @@ export default function PortfolioExperience() {
               <p className="solar-source-credit">PLANETARY TEXTURE MAPS / NASA・JPL・CALTECH</p>
             </div>
 
-            <article className={`solar-transmission ${creationDetailsOpen ? "is-expanded" : ""} ${creationHoverDismissed ? "is-hover-dismissed" : ""}`} aria-live="polite" onMouseLeave={() => setCreationHoverDismissed(false)}>
+            <article
+              className={`solar-transmission ${creationDetailsOpen ? "is-expanded" : ""}`}
+              aria-live="polite"
+              onMouseLeave={() => {
+                if (window.matchMedia("(hover:hover) and (pointer:fine)").matches) setCreationDetailsOpen(false);
+              }}
+              onTouchStart={(event) => { transmissionTouchRef.current = event.touches[0]?.clientY ?? null; }}
+              onTouchEnd={(event) => {
+                const startY = transmissionTouchRef.current;
+                const endY = event.changedTouches[0]?.clientY;
+                if (creationDetailsOpen && startY !== null && endY !== undefined && endY - startY > 90) setCreationDetailsOpen(false);
+                transmissionTouchRef.current = null;
+              }}
+            >
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
               <div className="transmission-content">
@@ -503,7 +515,6 @@ export default function PortfolioExperience() {
                   </div>
                 </div>
               </div>
-              <button className="transmission-close" type="button" onClick={(event) => { setCreationDetailsOpen(false); setCreationHoverDismissed(true); event.currentTarget.blur(); }} aria-label="詳細を閉じる"><span>CLOSE</span><i aria-hidden="true">×</i></button>
               <div className="orbit-controls"><button type="button" onClick={() => selectSolarPlanet(activeSolar - 1)} aria-label="前の惑星">←</button><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><button type="button" onClick={() => selectSolarPlanet(activeSolar + 1)} aria-label="次の惑星">→</button></div>
             </article>
           </div>
