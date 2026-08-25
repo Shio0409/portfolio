@@ -146,7 +146,7 @@ export default function PortfolioExperience() {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, [activeSolar]);
+  }, []);
 
   useEffect(() => {
     let settleTimer = 0;
@@ -171,7 +171,7 @@ export default function PortfolioExperience() {
       }
 
       document.documentElement.classList.add("creation-snapping");
-      const duration = Math.min(1680, Math.max(1240, 1080 + Math.abs(distance) * 1.35));
+      const duration = Math.min(1320, Math.max(860, 760 + Math.abs(distance) * .82));
       const startedAt = window.performance.now();
       const step = (now: number) => {
         const t = Math.min(1, (now - startedAt) / duration);
@@ -193,7 +193,7 @@ export default function PortfolioExperience() {
       if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open") || document.documentElement.classList.contains("creation-detail-open")) return;
 
       const rect = creation.getBoundingClientRect();
-      const threshold = window.innerHeight * .6;
+      const threshold = window.innerHeight * .78;
       const distance = Math.abs(rect.top);
       if (distance <= 2 || distance > threshold) return;
 
@@ -204,7 +204,7 @@ export default function PortfolioExperience() {
     const scheduleAlignment = () => {
       if (snapInProgress) return;
       window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(alignCreation, 220);
+      settleTimer = window.setTimeout(alignCreation, 150);
     };
 
     const interruptSnap = () => {
@@ -212,12 +212,14 @@ export default function PortfolioExperience() {
     };
 
     window.addEventListener("scroll", scheduleAlignment, { passive: true });
+    window.addEventListener("scrollend", alignCreation);
     window.addEventListener("wheel", interruptSnap, { passive: true });
     window.addEventListener("touchstart", interruptSnap, { passive: true });
     return () => {
       window.clearTimeout(settleTimer);
       stopSnap();
       window.removeEventListener("scroll", scheduleAlignment);
+      window.removeEventListener("scrollend", alignCreation);
       window.removeEventListener("wheel", interruptSnap);
       window.removeEventListener("touchstart", interruptSnap);
     };
@@ -465,7 +467,7 @@ export default function PortfolioExperience() {
               <p className="solar-source-credit">PLANETARY TEXTURE MAPS / NASA・JPL・CALTECH</p>
             </div>
 
-            <article className={`solar-transmission ${creationDetailsOpen ? "is-expanded" : ""} ${creationHoverDismissed ? "is-hover-dismissed" : ""}`} key={activeSolar} aria-live="polite" onMouseLeave={() => setCreationHoverDismissed(false)}>
+            <article className={`solar-transmission ${creationDetailsOpen ? "is-expanded" : ""} ${creationHoverDismissed ? "is-hover-dismissed" : ""}`} aria-live="polite" onMouseLeave={() => setCreationHoverDismissed(false)}>
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
               <div ref={transmissionTitleRef} className="transmission-title-slot" aria-hidden="true" />

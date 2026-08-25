@@ -141,9 +141,7 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(experience, /fitScale/);
   assert.match(experience, /requestAnimationFrame\(step\)/);
   assert.match(experience, /Math\.cos\(Math\.PI \* t\)/);
-  assert.match(experience, /window\.innerHeight \* \.6/);
   assert.match(experience, /classList\.add\("creation-snapping"\)/);
-  assert.match(experience, /setTimeout\(alignCreation, 220\)/);
   assert.match(experience, /transmissionTitleRef/);
   assert.match(experience, /titleSlotRect\.left - makerBaseLeft/);
   assert.match(experience, /titleSlotRect\.bottom - 12 - makerBaseBottom/);
@@ -162,6 +160,13 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(styles, /@keyframes reel-progress-3/);
   assert.match(styles, /@keyframes view-details-pulse/);
   assert.match(styles, /transform-origin: left bottom/);
+  assert.match(styles, /fixed-making-prefix\{[^}]*width:4em/);
+  assert.match(styles, /fixed-maker-word\{[^}]*flex:none/);
+  assert.doesNotMatch(experience, /key=\{activeSolar\}/);
+  assert.match(experience, /window\.removeEventListener\("resize", schedule\);\s*}\s*;\s*}, \[\]\);/);
+  assert.match(experience, /window\.innerHeight \* \.78/);
+  assert.match(experience, /setTimeout\(alignCreation, 150\)/);
+  assert.match(experience, /addEventListener\("scrollend", alignCreation\)/);
   assert.match(experience, /career-spacecraft/);
   assert.match(styles, /career-spacecraft\.png/);
   assert.match(styles, /fixed-making-statement\{position:fixed;z-index:2300/);
