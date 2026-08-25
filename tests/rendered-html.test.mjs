@@ -138,7 +138,6 @@ test("keeps content and rendering systems modular", async () => {
   assert.doesNotMatch(experience, /classList\.toggle\("is-hidden"/);
   assert.doesNotMatch(experience, /maker\.style\.position = "absolute"/);
   assert.match(experience, /maker\.dataset\.makerState = "docked"/);
-  assert.match(experience, /titleSlotRect\.bottom - makerBaseBottom/);
   assert.match(experience, /fitScale/);
   assert.match(experience, /requestAnimationFrame\(step\)/);
   assert.match(experience, /Math\.cos\(Math\.PI \* t\)/);
@@ -146,7 +145,9 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(experience, /classList\.add\("creation-snapping"\)/);
   assert.match(experience, /setTimeout\(alignCreation, 220\)/);
   assert.match(experience, /transmissionTitleRef/);
-  assert.match(experience, /titleSlotRect\.right - makerBaseRight/);
+  assert.match(experience, /titleSlotRect\.left - makerBaseLeft/);
+  assert.match(experience, /titleSlotRect\.bottom - 12 - makerBaseBottom/);
+  assert.match(experience, /setCreationDetailsOpen\(true\); selectSolarPlanet\(index\)/);
   assert.match(styles, /html\.creation-snapping \{ scroll-behavior: auto; \}/);
   assert.match(experience, /FRAME LOCKED/);
   assert.match(experience, /transmission-title-slot/);
@@ -157,6 +158,10 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(styles, /width:clamp\(650px,55vw,780px\)/);
   assert.match(styles, /width:100vw;height:100svh/);
   assert.match(styles, /html\.creation-detail-open/);
+  assert.match(styles, /@keyframes reel-progress-1/);
+  assert.match(styles, /@keyframes reel-progress-3/);
+  assert.match(styles, /@keyframes view-details-pulse/);
+  assert.match(styles, /transform-origin: left bottom/);
   assert.match(experience, /career-spacecraft/);
   assert.match(styles, /career-spacecraft\.png/);
   assert.match(styles, /fixed-making-statement\{position:fixed;z-index:2300/);

@@ -108,12 +108,12 @@ export default function PortfolioExperience() {
 
       const titleSlotRect = titleSlot.getBoundingClientRect();
       const makerStyle = window.getComputedStyle(maker);
-      const makerBaseRight = viewportWidth - Number.parseFloat(makerStyle.right);
+      const makerBaseLeft = viewportWidth - Number.parseFloat(makerStyle.right) - maker.offsetWidth;
       const makerBaseBottom = viewportHeight - Number.parseFloat(makerStyle.bottom);
       const fitScale = (titleSlotRect.width - 2) / Math.max(maker.offsetWidth, 1);
       targetScale = Math.max(.27, Math.min(targetScale, fitScale));
-      targetX = titleSlotRect.right - makerBaseRight;
-      targetY = titleSlotRect.bottom - makerBaseBottom;
+      targetX = titleSlotRect.left - makerBaseLeft;
+      targetY = titleSlotRect.bottom - 12 - makerBaseBottom;
 
       const docked = rect.top <= 0;
       const aligned = docked && rect.bottom > 0;
@@ -495,7 +495,7 @@ export default function PortfolioExperience() {
                         type="button"
                         key={planet.name}
                         className={index === activeSolar ? "is-active" : ""}
-                        onClick={() => selectSolarPlanet(index)}
+                        onClick={() => { setCreationDetailsOpen(true); selectSolarPlanet(index); }}
                         aria-label={`${planet.jp}を選択`}
                         aria-pressed={index === activeSolar}
                       ><span>{String(index + 1).padStart(2, "0")}</span></button>
