@@ -60,7 +60,7 @@ export default function PortfolioExperience() {
   const mainRef = useRef<HTMLElement>(null);
   const makerRef = useRef<HTMLDivElement>(null);
   const makerPrefixRef = useRef<HTMLParagraphElement>(null);
-  const transmissionTitleRef = useRef<HTMLDivElement>(null);
+  const creationTitleAnchorRef = useRef<HTMLHeadingElement>(null);
   const careerHeadingRef = useRef<HTMLHeadingElement>(null);
   const careerMapRef = useRef<HTMLDivElement>(null);
   const futureRef = useRef<HTMLElement>(null);
@@ -80,8 +80,8 @@ export default function PortfolioExperience() {
       const creation = creationRef.current;
       const maker = makerRef.current;
       const prefix = makerPrefixRef.current;
-      const titleSlot = transmissionTitleRef.current;
-      if (!creation || !maker || !prefix || !titleSlot) return;
+      const titleAnchor = creationTitleAnchorRef.current;
+      if (!creation || !maker || !prefix || !titleAnchor) return;
 
       const rect = creation.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
@@ -89,37 +89,29 @@ export default function PortfolioExperience() {
       const progress = Math.min(1, Math.max(0, (viewportHeight - rect.top) / viewportHeight));
       let targetX = 0;
       let targetY = 0;
-      let targetScale = .42;
-
-      if (viewportWidth <= 1050) {
-        targetScale = .5;
-      }
-      if (viewportWidth <= 760) {
-        targetScale = .46;
-      } else if (viewportHeight <= 680) {
-        targetScale = .38;
-      }
-
       maker.style.position = "fixed";
       maker.style.removeProperty("left");
       maker.style.removeProperty("top");
       maker.style.removeProperty("right");
       maker.style.removeProperty("bottom");
 
-      const titleSlotRect = titleSlot.getBoundingClientRect();
+      const titleAnchorRect = titleAnchor.getBoundingClientRect();
       const makerStyle = window.getComputedStyle(maker);
       const makerBaseLeft = viewportWidth - Number.parseFloat(makerStyle.right) - maker.offsetWidth;
       const makerBaseBottom = viewportHeight - Number.parseFloat(makerStyle.bottom);
-      const fitScale = (titleSlotRect.width - 2) / Math.max(maker.offsetWidth, 1);
-      targetScale = Math.max(.27, Math.min(targetScale, fitScale));
-      targetX = titleSlotRect.left - makerBaseLeft;
-      targetY = titleSlotRect.bottom - 12 - makerBaseBottom;
+      const targetScale = titleAnchorRect.width / Math.max(maker.offsetWidth, 1);
+      targetX = titleAnchorRect.left - makerBaseLeft;
+      targetY = titleAnchorRect.bottom - makerBaseBottom;
 
       const docked = rect.top <= 0;
-      const aligned = docked && rect.bottom > 0;
-      if (docked) {
+      const withinCreation = rect.bottom > 0;
+      const aligned = docked && withinCreation;
+      if (aligned) {
         maker.style.setProperty("--maker-transform", `translate3d(${targetX.toFixed(2)}px, ${targetY.toFixed(2)}px, 0) scale(${targetScale.toFixed(4)})`);
         maker.dataset.makerState = "docked";
+      } else if (docked) {
+        maker.style.setProperty("--maker-transform", `translate3d(${targetX.toFixed(2)}px, ${targetY.toFixed(2)}px, 0) scale(${targetScale.toFixed(4)})`);
+        maker.dataset.makerState = "after";
       } else {
         const x = targetX * progress;
         const y = targetY * progress;
@@ -128,7 +120,8 @@ export default function PortfolioExperience() {
         maker.dataset.makerState = progress > .02 ? "handoff" : "hero";
       }
 
-      maker.setAttribute("aria-hidden", "false");
+      maker.setAttribute("aria-hidden", aligned || !withinCreation ? "true" : "false");
+      titleAnchor.style.opacity = aligned ? "1" : "0";
       const prefixOpacity = docked ? 1 : Math.min(1, Math.max(0, (progress - .42) / .36));
       prefix.style.opacity = String(prefixOpacity);
       prefix.style.transform = `translateX(${((1 - prefixOpacity) * 35).toFixed(2)}px)`;
@@ -470,12 +463,8 @@ export default function PortfolioExperience() {
             <article className={`solar-transmission ${creationDetailsOpen ? "is-expanded" : ""} ${creationHoverDismissed ? "is-hover-dismissed" : ""}`} aria-live="polite" onMouseLeave={() => setCreationHoverDismissed(false)}>
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
-              <div ref={transmissionTitleRef} className="transmission-title-slot" aria-hidden="true" />
-              <button className="transmission-summary" type="button" aria-expanded={creationDetailsOpen} onClick={() => setCreationDetailsOpen(true)}>
-                <span>{activePlanet.description}</span>
-                <strong>VIEW DETAILS <i aria-hidden="true">↗</i></strong>
-              </button>
-              <div className="transmission-expanded">
+              <div className="transmission-content">
+                <div className="transmission-media-pane">
                 {activeCreationMedia ? (
                   <MediaFrame asset={activeCreationMedia} className="creation-detail-media" />
                 ) : (
@@ -484,24 +473,33 @@ export default function PortfolioExperience() {
                     <strong>{activePlanet.name} / IMAGE SLOT</strong>
                   </div>
                 )}
-                <div className="transmission-expanded-copy">
-                  <h3>{activePlanet.prefix}<br />つくる。</h3>
-                  <span>DESIGN LENS / {activePlanet.category.toUpperCase()}</span>
-                  <p>{activePlanet.detail}</p>
-                  <ul aria-label={`${activePlanet.jp}の設計領域`}>
-                    {activePlanet.focus.map((item) => <li key={item}>{item}</li>)}
-                  </ul>
-                  <div className="planet-selector" aria-label="惑星を直接選択">
-                    {solarPlanets.map((planet, index) => (
-                      <button
-                        type="button"
-                        key={planet.name}
-                        className={index === activeSolar ? "is-active" : ""}
-                        onClick={() => { setCreationDetailsOpen(true); selectSolarPlanet(index); }}
-                        aria-label={`${planet.jp}を選択`}
-                        aria-pressed={index === activeSolar}
-                      ><span>{String(index + 1).padStart(2, "0")}</span></button>
-                    ))}
+                </div>
+                <div className="transmission-copy-column">
+                  <h2 ref={creationTitleAnchorRef} className="creation-making-title" aria-hidden={!creationAligned}>
+                    <span>{activePlanet.prefix}</span><strong>つくる。</strong>
+                  </h2>
+                  <button className="transmission-summary" type="button" aria-expanded={creationDetailsOpen} onClick={() => setCreationDetailsOpen(true)}>
+                    <span>{activePlanet.description}</span>
+                    <strong>VIEW DETAILS <i aria-hidden="true">↗</i></strong>
+                  </button>
+                  <div className="transmission-details">
+                    <span>DESIGN LENS / {activePlanet.category.toUpperCase()}</span>
+                    <p>{activePlanet.detail}</p>
+                    <ul aria-label={`${activePlanet.jp}の設計領域`}>
+                      {activePlanet.focus.map((item) => <li key={item}>{item}</li>)}
+                    </ul>
+                    <div className="planet-selector" aria-label="惑星を直接選択">
+                      {solarPlanets.map((planet, index) => (
+                        <button
+                          type="button"
+                          key={planet.name}
+                          className={index === activeSolar ? "is-active" : ""}
+                          onClick={() => { setCreationDetailsOpen(true); selectSolarPlanet(index); }}
+                          aria-label={`${planet.jp}を選択`}
+                          aria-pressed={index === activeSolar}
+                        ><span>{String(index + 1).padStart(2, "0")}</span></button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
