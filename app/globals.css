@@ -362,10 +362,10 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   right: var(--page-gutter);
   display: flex;
   width:300px;
-  height: 250px;
+  height: 221px;
   min-height: 0;
   margin: 0;
-  padding: 18px 20px 43px;
+  padding: 18px 20px 14px;
   flex-direction: column;
   overflow: hidden;
   border:1px solid color-mix(in srgb,var(--category-accent),transparent 68%);
@@ -440,7 +440,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 }
 
 @media (max-width: 1050px) {
-  .solar-transmission { --transmission-copy-width:236px;--transmission-title-height:66px;top:66px;width:272px;height:242px;padding:16px 18px 43px; }
+  .solar-transmission { --transmission-copy-width:236px;--transmission-title-height:66px;top:66px;width:272px;height:213px;padding:16px 18px 14px; }
   .creation-making-title > span { font-size:21px; }
   .creation-making-title > strong { font-size:42px; }
   .transmission-summary { min-height:58px; }
@@ -453,7 +453,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .solar-stage { height:100%;min-height:0; }
   .solar-stage::after { background:radial-gradient(circle 34vw at var(--pointer-x) var(--pointer-y),color-mix(in srgb,var(--category-accent),transparent 86%),transparent 75%); }
   .solar-source-credit { bottom:10px;left:16px;font-size:5px; }
-  .solar-transmission { top:66px;right:20px;width:min(272px,calc(100% - 40px));height:242px;min-height:0;margin:0;padding:16px 18px 44px; }
+  .solar-transmission { top:66px;right:20px;width:min(272px,calc(100% - 40px));height:213px;min-height:0;margin:0;padding:16px 18px 15px; }
   .solar-transmission .transmission-meta { padding-bottom:10px;font-size:6px; }
   .solar-transmission .transmission-signal { margin-top:10px;font-size:6px; }
   .solar-transmission { --transmission-title-height:64px; }
@@ -479,7 +479,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
 }
 
 @media (max-height: 680px) and (min-width: 761px) {
-  .solar-transmission { top:70px;height:238px; }
+  .solar-transmission { top:70px;height:209px; }
   .solar-transmission { --transmission-title-height:62px; }
   .solar-transmission:hover,.solar-transmission.is-expanded { height:360px; }
   .creation-detail-media { height:156px; }
