@@ -359,23 +359,26 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   top: clamp(74px,9vh,92px);
   right: var(--page-gutter);
   display: flex;
-  width: clamp(324px,26vw,390px);
-  height: clamp(318px,39vh,350px);
+  width: clamp(270px,22vw,318px);
+  height: 250px;
   min-height: 0;
   margin: 0;
-  padding: clamp(21px,2.1vw,30px) clamp(22px,2.3vw,34px) 52px;
+  padding: 18px 20px 43px;
   flex-direction: column;
-  border-color: color-mix(in srgb,var(--category-accent),transparent 68%);
+  overflow: hidden;
+  border:1px solid color-mix(in srgb,var(--category-accent),transparent 68%);
   background:
     linear-gradient(135deg,color-mix(in srgb,var(--category-accent),transparent 94%),transparent 38%),
     linear-gradient(152deg,rgba(11,18,45,.91),rgba(2,4,13,.88));
   box-shadow:0 30px 90px rgba(0,0,0,.42),inset 0 0 52px rgba(90,115,255,.035);
   backdrop-filter:blur(20px) saturate(1.18);
   animation:transmission-in .58s cubic-bezier(.16,1,.3,1) both;
-  transition:border-color .4s ease,box-shadow .4s ease;
+  transform-origin:top right;
+  transition:width .64s cubic-bezier(.16,1,.3,1),height .64s cubic-bezier(.16,1,.3,1),border-color .4s ease,box-shadow .4s ease,background .4s ease;
   pointer-events:auto;
 }
-.solar-transmission:hover {
+.solar-transmission:not(.is-hover-dismissed):hover,
+.solar-transmission.is-expanded {
   border-color:color-mix(in srgb,var(--category-accent),transparent 46%);
   box-shadow:0 34px 105px rgba(0,0,0,.5),0 0 42px color-mix(in srgb,var(--category-accent),transparent 91%),inset 0 0 55px rgba(90,115,255,.05);
 }
@@ -390,36 +393,53 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   border-right:1px solid color-mix(in srgb,var(--category-accent),transparent 28%);
   content:"";
 }
-.solar-transmission .transmission-meta { padding-bottom:13px;font-size:7px; }
-.solar-transmission .transmission-signal { margin:15px 0 0; }
-.transmission-title-slot { height:clamp(74px,10.5vh,97px);flex:none; }
-.transmission-detail { display:grid;margin-top:2px;align-items:stretch;gap:14px;grid-template-columns:minmax(0,1fr) 116px; }
-.transmission-detail > p { margin:0;font-size:10px;line-height:1.78; }
-.creation-media-frame,.creation-media-placeholder { width:116px;height:78px;border:1px solid color-mix(in srgb,var(--category-accent),transparent 72%); }
+.solar-transmission .transmission-meta { padding-bottom:10px;font-size:6px; }
+.solar-transmission .transmission-signal { margin:10px 0 0;font-size:6px; }
+.transmission-title-slot { height:70px;flex:none; }
+.transmission-summary { display:grid;width:100%;min-height:62px;padding:0;text-align:left;align-items:end;gap:10px;grid-template-columns:minmax(0,1fr) auto; }
+.transmission-summary > span { color:rgba(229,237,255,.72);font-size:9px;line-height:1.65; }
+.transmission-summary > strong { display:flex;padding-bottom:2px;align-items:center;gap:7px;color:var(--category-accent);font:700 5px/1 var(--display-font);letter-spacing:.12em;white-space:nowrap; }
+.transmission-summary > strong i { font-style:normal;font-size:8px;transition:transform .3s ease; }
+.transmission-summary:hover > strong i,.transmission-summary:focus-visible > strong i { transform:translate(2px,-2px); }
+.transmission-expanded { display:grid;min-height:0;align-items:stretch;gap:24px;grid-template-columns:minmax(240px,1.1fr) minmax(220px,.9fr);opacity:0;visibility:hidden;transform:translateY(15px);transition:opacity .28s ease,transform .5s cubic-bezier(.16,1,.3,1),visibility 0s linear .34s;pointer-events:none; }
+.creation-detail-media { width:100%;height:184px;border:1px solid color-mix(in srgb,var(--category-accent),transparent 64%); }
 .creation-media-placeholder { position:relative;display:flex;padding:11px;overflow:hidden;justify-content:flex-end;flex-direction:column;background:linear-gradient(145deg,color-mix(in srgb,var(--category-accent),transparent 91%),rgba(2,5,15,.76)); }
 .creation-media-placeholder::before { position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 47%,rgba(245,247,255,.08) 48% 48.7%,transparent 50%),repeating-linear-gradient(90deg,transparent 0 17px,rgba(245,247,255,.035) 18px);content:""; }
 .creation-media-placeholder span,.creation-media-placeholder strong { position:relative;z-index:1; }
 .creation-media-placeholder span { margin-bottom:6px;color:rgba(229,237,255,.45);font:700 5px/1 var(--display-font);letter-spacing:.13em; }
 .creation-media-placeholder strong { color:rgba(239,244,255,.72);font:700 6px/1.35 var(--display-font);letter-spacing:.1em; }
-.planet-selector { display:grid;margin:14px 0 0;gap:5px;grid-template-columns:repeat(8,1fr); }
+.transmission-expanded-copy { display:flex;min-width:0;flex-direction:column; }
+.transmission-expanded-copy > h3 { display:none;margin:0;color:#fff;font:700 clamp(38px,8vw,70px)/.82 var(--display-font);letter-spacing:-.08em; }
+.transmission-expanded-copy > span { color:var(--category-accent);font:700 6px/1 var(--display-font);letter-spacing:.14em; }
+.transmission-expanded-copy > p { margin:17px 0 0;color:rgba(229,237,255,.72);font-size:10px;line-height:1.8; }
+.transmission-expanded-copy > ul { display:flex;margin:auto 0 0;padding:0;gap:6px;list-style:none; }
+.transmission-expanded-copy > ul li { padding:6px 8px;border:1px solid rgba(229,237,255,.13);color:rgba(229,237,255,.58);font-size:7px;white-space:nowrap; }
+.planet-selector { display:grid;margin:13px 0 0;gap:5px;grid-template-columns:repeat(8,1fr); }
 .planet-selector button { position:relative;display:grid;height:20px;place-items:center;border:1px solid rgba(245,247,255,.11);color:rgba(245,247,255,.38);overflow:hidden;transition:color .25s ease,border-color .25s ease,background .25s ease,transform .25s ease; }
 .planet-selector button::before { position:absolute;right:0;bottom:0;left:0;height:1px;background:var(--category-accent);content:"";transform:scaleX(0);transform-origin:left;transition:transform .35s ease; }
 .planet-selector button span { position:relative;font:700 6px/1 var(--display-font);letter-spacing:.08em; }
 .planet-selector button:hover,.planet-selector button:focus-visible { color:#fff;border-color:color-mix(in srgb,var(--category-accent),transparent 46%);background:color-mix(in srgb,var(--category-accent),transparent 93%);transform:translateY(-2px); }
 .planet-selector button.is-active { color:#fff;border-color:color-mix(in srgb,var(--category-accent),transparent 30%);background:color-mix(in srgb,var(--category-accent),transparent 88%); }
 .planet-selector button.is-active::before { transform:scaleX(1); }
-.solar-transmission .transmission-unlock { position:static;margin:auto 0 0;padding-top:12px; }
-.solar-transmission .transmission-unlock strong { color:var(--category-accent); }
 .solar-transmission .orbit-controls { height:43px; }
 .solar-transmission .orbit-controls button { position:relative;overflow:hidden;font-size:15px;transition:color .25s ease,background .25s ease; }
 .solar-transmission .orbit-controls button:hover { color:#02030a;background:var(--category-accent); }
 .solar-transmission .orbit-controls button:active { transform:scale(.96); }
+.transmission-close { position:absolute;z-index:4;top:42px;right:18px;display:flex;align-items:center;gap:9px;color:rgba(229,237,255,.62);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .3s;pointer-events:none; }
+.transmission-close span { font:700 5px/1 var(--display-font);letter-spacing:.15em; }
+.transmission-close i { display:grid;width:22px;aspect-ratio:1;place-items:center;border:1px solid rgba(229,237,255,.18);font-style:normal;font-size:12px; }
+
+@media (hover:hover) and (pointer:fine) {
+  .solar-transmission:not(.is-hover-dismissed):hover,.solar-transmission.is-expanded { width:clamp(650px,55vw,780px);height:390px; }
+  .solar-transmission:not(.is-hover-dismissed):hover .transmission-summary,.solar-transmission.is-expanded .transmission-summary { display:none; }
+  .solar-transmission:not(.is-hover-dismissed):hover .transmission-expanded,.solar-transmission.is-expanded .transmission-expanded { opacity:1;visibility:visible;transform:none;transition-delay:.18s,0s,0s;pointer-events:auto; }
+  .solar-transmission:not(.is-hover-dismissed):hover .transmission-close,.solar-transmission.is-expanded .transmission-close { opacity:1;visibility:visible;transition-delay:.2s,0s;pointer-events:auto; }
+}
 
 @media (max-width: 1050px) {
-  .solar-transmission { top:66px;width:320px;height:340px;padding:19px 20px 43px; }
-  .transmission-title-slot { height:68px; }
-  .transmission-detail { gap:10px;grid-template-columns:minmax(0,1fr) 100px; }
-  .creation-media-frame,.creation-media-placeholder { width:100px;height:70px; }
+  .solar-transmission { top:66px;width:272px;height:242px;padding:16px 18px 43px; }
+  .transmission-title-slot { height:66px; }
+  .transmission-summary { min-height:58px; }
 }
 
 @media (max-width: 760px) {
@@ -429,23 +449,35 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 1px s
   .solar-stage { height:100%;min-height:0; }
   .solar-stage::after { background:radial-gradient(circle 34vw at var(--pointer-x) var(--pointer-y),color-mix(in srgb,var(--category-accent),transparent 86%),transparent 75%); }
   .solar-source-credit { bottom:10px;left:16px;font-size:5px; }
-  .solar-transmission { top:66px;right:20px;width:calc(100% - 40px);height:clamp(332px,45svh,365px);min-height:0;margin:0;padding:17px 18px 44px; }
+  .solar-transmission { top:66px;right:20px;width:min(272px,calc(100% - 40px));height:242px;min-height:0;margin:0;padding:16px 18px 44px; }
   .solar-transmission .transmission-meta { padding-bottom:10px;font-size:6px; }
   .solar-transmission .transmission-signal { margin-top:10px;font-size:6px; }
   .transmission-title-slot { height:64px; }
-  .transmission-detail { gap:9px;grid-template-columns:minmax(0,1fr) 92px; }
-  .transmission-detail > p { font-size:9.5px;line-height:1.65; }
-  .creation-media-frame,.creation-media-placeholder { width:92px;height:66px; }
-  .creation-media-placeholder { padding:8px; }
-  .planet-selector { margin-top:9px;gap:3px; }
-  .planet-selector button { height:17px; }
-  .solar-transmission .transmission-unlock { padding-top:9px; }
+  .transmission-summary { min-height:58px; }
   .solar-transmission .orbit-controls { height:37px;grid-template-columns:44px 1fr 44px; }
+
+  html.creation-detail-open,html.creation-detail-open body { overflow:hidden;overscroll-behavior:none; }
+  html.creation-detail-open .creation-section { z-index:2500;overflow:visible; }
+  .solar-transmission.is-expanded { position:fixed;z-index:2600;inset:0;width:100vw;height:100svh;padding:76px 20px 58px;overflow-y:auto;border:0;background:radial-gradient(circle at 82% 14%,color-mix(in srgb,var(--category-accent),transparent 80%),transparent 32%),rgba(2,4,13,.98);box-shadow:none;backdrop-filter:blur(28px) saturate(1.2); }
+  .solar-transmission.is-expanded .transmission-meta { position:absolute;top:22px;right:20px;left:20px;padding-bottom:13px; }
+  .solar-transmission.is-expanded .transmission-signal,.solar-transmission.is-expanded .transmission-title-slot,.solar-transmission.is-expanded .transmission-summary { display:none; }
+  .solar-transmission.is-expanded .transmission-expanded { display:flex;min-height:calc(100svh - 150px);gap:26px;flex-direction:column;opacity:1;visibility:visible;transform:none;transition:none;pointer-events:auto; }
+  .solar-transmission.is-expanded .creation-detail-media { width:100%;height:clamp(230px,34svh,350px);flex:none; }
+  .solar-transmission.is-expanded .transmission-expanded-copy { flex:1; }
+  .solar-transmission.is-expanded .transmission-expanded-copy > h3 { display:block;margin:-3px 0 23px; }
+  .solar-transmission.is-expanded .transmission-expanded-copy > p { margin-top:18px;font-size:11px;line-height:1.9; }
+  .solar-transmission.is-expanded .transmission-expanded-copy > ul { margin:24px 0 0;flex-wrap:wrap; }
+  .solar-transmission.is-expanded .planet-selector { margin:26px 0 0;gap:4px; }
+  .solar-transmission.is-expanded .planet-selector button { height:28px; }
+  .solar-transmission.is-expanded .transmission-close { top:44px;right:20px;opacity:1;visibility:visible;pointer-events:auto; }
+  .solar-transmission.is-expanded .orbit-controls { position:fixed;z-index:2;height:48px;background:rgba(2,4,13,.94);backdrop-filter:blur(12px); }
 }
 
 @media (max-height: 680px) and (min-width: 761px) {
-  .solar-transmission { top:70px;height:330px; }
-  .transmission-title-slot { height:67px; }
+  .solar-transmission { top:70px;height:238px; }
+  .transmission-title-slot { height:62px; }
+  .solar-transmission:not(.is-hover-dismissed):hover,.solar-transmission.is-expanded { height:360px; }
+  .creation-detail-media { height:156px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

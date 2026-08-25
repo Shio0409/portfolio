@@ -1,4 +1,7 @@
 .solar-webgl {
+  --target-x: 68.8%;
+  --target-y: 75.2%;
+  --target-size: clamp(224px, 29vw, 448px);
   position: absolute;
   z-index: 1;
   inset: 0;
@@ -83,9 +86,9 @@
 .solar-webgl-fallback > i {
   position: absolute;
   z-index: 2;
-  top: 75.2%;
-  left: 68.8%;
-  width: clamp(210px, 27vw, 430px);
+  top: var(--target-y);
+  left: var(--target-x);
+  width: calc(var(--target-size) * .91);
   aspect-ratio: 1;
   border: 1px solid color-mix(in srgb, var(--fallback-glow), white 22%);
   border-radius: 50%;
@@ -141,9 +144,9 @@
 .webgl-target-reticle {
   position: absolute;
   z-index: 3;
-  top: 75.2%;
-  left: 68.8%;
-  width: clamp(224px, 29vw, 448px);
+  top: var(--target-y);
+  left: var(--target-x);
+  width: var(--target-size);
   aspect-ratio: 1;
   border: 1px solid rgba(218, 230, 255, .2);
   border-radius: 50%;
@@ -168,12 +171,12 @@
 @keyframes fallback-sun-scan { to { filter: saturate(.92) contrast(1.2) brightness(1.08); opacity: .82; } }
 
 @media (max-width: 760px) {
+  .solar-webgl { --target-x:62%;--target-y:73.5%;--target-size:50vw; }
   .solar-webgl-fallback { background: radial-gradient(circle at 12% 49%, rgba(255, 173, 83, .14), transparent 39%); }
   .solar-webgl-fallback::after { top: 49%; left: 12%; width: 118vw; height: 92svh; }
   .solar-webgl-fallback::before { left: -58vw; width: 140vw; }
-  .solar-webgl-fallback > i { top: 73.5%; left: 62%; width: 48vw; }
+  .solar-webgl-fallback > i { width:calc(var(--target-size) * .91); }
   .webgl-core-label { top: 49%; left: 7%; font-size: 5px; }
-  .webgl-target-reticle { top: 73.5%; left: 62%; width: 50vw; }
   .webgl-render-state { right: 20px; }
 }
 

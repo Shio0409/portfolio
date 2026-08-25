@@ -42,7 +42,10 @@ test("server-renders the portfolio experience", async () => {
   assert.match(html, /SYSTEM \/ SYNC/);
   assert.match(html, /SOLAR CORE \/ 00/);
   assert.match(html, /TARGET \/ (?:<!-- -->)?03/);
-  assert.match(html, /目的・導線・感情の変化/);
+  assert.match(html, /目的と感情を、記憶に残る導線へ/);
+  assert.match(html, /VIEW DETAILS/);
+  assert.match(html, /事業の目的とユーザーの実感/);
+  assert.match(html, /DESIGN LENS/);
   assert.match(html, /class="solar-webgl/);
   assert.doesNotMatch(html, /class="solar-planet|is-behind-sun|is-in-front|is-outgoing/);
   assert.match(html, /class="career-spacecraft/);
@@ -101,6 +104,9 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(solarRenderer, /new THREE\.PointLight/);
   assert.match(solarRenderer, /const solarCenter = \{ x:-6\.6, y:\.05, z:-1\.1 \}/);
   assert.match(solarRenderer, /solarCenter\.x \+ Math\.cos\(theta\) \* orbitProfile\.radiusX \* scale/);
+  assert.match(solarRenderer, /targetWorldPosition = orbitPoint\(targetAngle\)/);
+  assert.match(solarRenderer, /targetProjection\.copy\(targetWorldPosition\)\.project\(camera\)/);
+  assert.match(solarRenderer, /style\.setProperty\("--target-x"/);
   assert.doesNotMatch(solarRenderer, /point\.clone\(\)\.multiplyScalar\(scale\)/);
   assert.match(solarRenderer, /makeHologramMaterial/);
   assert.match(solarRenderer, /sunGridMaterial/);
@@ -119,6 +125,7 @@ test("keeps content and rendering systems modular", async () => {
   assert.equal((solarData.match(/atmosphere:/g) ?? []).length, 9);
   assert.match(solarData, /spin:-/);
   assert.match(solarData, /ring:/);
+  assert.equal((solarData.match(/focus:/g) ?? []).length, 9);
   assert.match(solarStyles, /solar-webgl-fallback/);
   assert.match(solarStyles, /webgl-target-reticle/);
   assert.match(solarStyles, /webgl-core-label/);
@@ -143,6 +150,13 @@ test("keeps content and rendering systems modular", async () => {
   assert.match(styles, /html\.creation-snapping \{ scroll-behavior: auto; \}/);
   assert.match(experience, /FRAME LOCKED/);
   assert.match(experience, /transmission-title-slot/);
+  assert.match(experience, /creationDetailsOpen/);
+  assert.match(experience, /transmission-summary/);
+  assert.match(experience, /transmission-expanded/);
+  assert.match(styles, /@media \(hover:hover\) and \(pointer:fine\)/);
+  assert.match(styles, /width:clamp\(650px,55vw,780px\)/);
+  assert.match(styles, /width:100vw;height:100svh/);
+  assert.match(styles, /html\.creation-detail-open/);
   assert.match(experience, /career-spacecraft/);
   assert.match(styles, /career-spacecraft\.png/);
   assert.match(styles, /fixed-making-statement\{position:fixed;z-index:2300/);

@@ -52,6 +52,8 @@ export default function PortfolioExperience() {
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [creationAligned, setCreationAligned] = useState(false);
+  const [creationDetailsOpen, setCreationDetailsOpen] = useState(false);
+  const [creationHoverDismissed, setCreationHoverDismissed] = useState(false);
   const [careerProgress, setCareerProgress] = useState(0);
   const [careerCharacterVisible, setCareerCharacterVisible] = useState(false);
   const creationRef = useRef<HTMLElement>(null);
@@ -188,7 +190,7 @@ export default function PortfolioExperience() {
 
     const alignCreation = () => {
       const creation = creationRef.current;
-      if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open")) return;
+      if (!creation || snapInProgress || document.documentElement.classList.contains("intro-open") || document.documentElement.classList.contains("creation-detail-open")) return;
 
       const rect = creation.getBoundingClientRect();
       const threshold = window.innerHeight * .6;
@@ -238,6 +240,21 @@ export default function PortfolioExperience() {
     document.documentElement.classList.toggle("intro-open", loaderState !== "hidden");
     return () => document.documentElement.classList.remove("intro-open");
   }, [loaderState]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("creation-detail-open", creationDetailsOpen);
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setCreationDetailsOpen(false);
+        setCreationHoverDismissed(true);
+      }
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.documentElement.classList.remove("creation-detail-open");
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [creationDetailsOpen]);
 
   useEffect(() => {
     const revealObserver = new IntersectionObserver(
@@ -448,34 +465,45 @@ export default function PortfolioExperience() {
               <p className="solar-source-credit">PLANETARY TEXTURE MAPS / NASA・JPL・CALTECH</p>
             </div>
 
-            <article className="solar-transmission" key={activeSolar} aria-live="polite">
+            <article className={`solar-transmission ${creationDetailsOpen ? "is-expanded" : ""} ${creationHoverDismissed ? "is-hover-dismissed" : ""}`} key={activeSolar} aria-live="polite" onMouseLeave={() => setCreationHoverDismissed(false)}>
               <div className="transmission-meta"><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><span>{activePlanet.jp} / {activePlanet.name}</span></div>
               <p className="transmission-signal"><i /> ORBIT ALIGNED</p>
               <div ref={transmissionTitleRef} className="transmission-title-slot" aria-hidden="true" />
-              <div className="transmission-detail">
-                <p>{activePlanet.description}</p>
+              <button className="transmission-summary" type="button" aria-expanded={creationDetailsOpen} onClick={() => setCreationDetailsOpen(true)}>
+                <span>{activePlanet.description}</span>
+                <strong>VIEW DETAILS <i aria-hidden="true">↗</i></strong>
+              </button>
+              <div className="transmission-expanded">
                 {activeCreationMedia ? (
-                  <MediaFrame asset={activeCreationMedia} className="creation-media-frame" />
+                  <MediaFrame asset={activeCreationMedia} className="creation-detail-media" />
                 ) : (
-                  <div className="creation-media-placeholder" role="img" aria-label={`${activePlanet.jp}の作品写真枠`}>
+                  <div className="creation-detail-media creation-media-placeholder" role="img" aria-label={`${activePlanet.jp}の作品写真枠`}>
                     <span>VISUAL ARCHIVE</span>
                     <strong>{activePlanet.name} / IMAGE SLOT</strong>
                   </div>
                 )}
+                <div className="transmission-expanded-copy">
+                  <h3>{activePlanet.prefix}<br />つくる。</h3>
+                  <span>DESIGN LENS / {activePlanet.category.toUpperCase()}</span>
+                  <p>{activePlanet.detail}</p>
+                  <ul aria-label={`${activePlanet.jp}の設計領域`}>
+                    {activePlanet.focus.map((item) => <li key={item}>{item}</li>)}
+                  </ul>
+                  <div className="planet-selector" aria-label="惑星を直接選択">
+                    {solarPlanets.map((planet, index) => (
+                      <button
+                        type="button"
+                        key={planet.name}
+                        className={index === activeSolar ? "is-active" : ""}
+                        onClick={() => selectSolarPlanet(index)}
+                        aria-label={`${planet.jp}を選択`}
+                        aria-pressed={index === activeSolar}
+                      ><span>{String(index + 1).padStart(2, "0")}</span></button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="planet-selector" aria-label="惑星を直接選択">
-                {solarPlanets.map((planet, index) => (
-                  <button
-                    type="button"
-                    key={planet.name}
-                    className={index === activeSolar ? "is-active" : ""}
-                    onClick={() => selectSolarPlanet(index)}
-                    aria-label={`${planet.jp}を選択`}
-                    aria-pressed={index === activeSolar}
-                  ><span>{String(index + 1).padStart(2, "0")}</span></button>
-                ))}
-              </div>
-              <div className="transmission-unlock"><span>CONNECTED FIELD</span><strong>{activePlanet.category.toUpperCase()}</strong></div>
+              <button className="transmission-close" type="button" onClick={(event) => { setCreationDetailsOpen(false); setCreationHoverDismissed(true); event.currentTarget.blur(); }} aria-label="詳細を閉じる"><span>CLOSE</span><i aria-hidden="true">×</i></button>
               <div className="orbit-controls"><button type="button" onClick={() => selectSolarPlanet(activeSolar - 1)} aria-label="前の惑星">←</button><span>{String(activeSolar + 1).padStart(2, "0")} / 08</span><button type="button" onClick={() => selectSolarPlanet(activeSolar + 1)} aria-label="次の惑星">→</button></div>
             </article>
           </div>

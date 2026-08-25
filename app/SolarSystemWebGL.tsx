@@ -182,6 +182,7 @@ export default function SolarSystemWebGL({ activeIndex, dragOffset }: SolarSyste
           solarCenter.y + Math.sin(theta) * orbitProfile.radiusY * scale,
           solarCenter.z - Math.sin(theta) * orbitProfile.depth * scale,
         );
+        const targetWorldPosition = orbitPoint(targetAngle);
 
         const starSeed = { value:3749 };
         const starCount = window.innerWidth <= 760 ? 420 : 760;
@@ -385,6 +386,10 @@ export default function SolarSystemWebGL({ activeIndex, dragOffset }: SolarSyste
         const visibilityObserver = new IntersectionObserver(([entry]) => { sceneVisible = entry.isIntersecting; }, { rootMargin:"180px" });
         visibilityObserver.observe(host);
 
+        const targetProjection = new THREE.Vector3();
+        const targetEdgeProjection = new THREE.Vector3();
+        const targetScreenOffset = new THREE.Vector3();
+
         const onContextLost = (event: Event) => {
           event.preventDefault();
           setStatus("fallback");
@@ -432,6 +437,17 @@ export default function SolarSystemWebGL({ activeIndex, dragOffset }: SolarSyste
               node.group.visible = opacity > .015;
               if (!reducedMotion) node.globe.rotation.y += delta * solarPlanets[index].spin;
             });
+            const targetPlanetScale = solarPlanets[activeRef.current].radius * scaleStops[0];
+            targetProjection.copy(targetWorldPosition).project(camera);
+            targetScreenOffset.set(targetPlanetScale * 1.22, 0, 0).applyQuaternion(camera.quaternion);
+            targetEdgeProjection.copy(targetWorldPosition).add(targetScreenOffset).project(camera);
+            const targetX = (targetProjection.x * .5 + .5) * 100;
+            const targetY = (-targetProjection.y * .5 + .5) * 100;
+            const projectedRadius = Math.abs(targetEdgeProjection.x - targetProjection.x) * host.clientWidth * .5;
+            const targetSize = Math.min(compact ? 330 : 520, Math.max(compact ? 150 : 190, projectedRadius * 2.8));
+            host.style.setProperty("--target-x", `${targetX.toFixed(3)}%`);
+            host.style.setProperty("--target-y", `${targetY.toFixed(3)}%`);
+            host.style.setProperty("--target-size", `${targetSize.toFixed(2)}px`);
             sunHologram.uniforms.uTime.value = reducedMotion ? 0 : now / 1000;
             glowMaterial.opacity = .34 + Math.sin(now * .00062) * .055;
             if (!reducedMotion) {
